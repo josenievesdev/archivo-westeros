@@ -24,3 +24,11 @@ export function houseBundleQueryKey(
 export function houseListQueryKey(params: ResourceListParams) {
   return ['houses', 'list', params] as const
 }
+
+export function houseArchivePageQueryKey(params: ResourceListParams) {
+  return ['houses', 'archive', 'page', params] as const
+}
+
+export function majorHousesQueryKey() {
+  return ['houses', 'major'] as const
+}

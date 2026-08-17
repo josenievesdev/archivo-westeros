@@ -178,15 +178,26 @@ La búsqueda local crea documentos con nombre completo, `shortName`, región, `w
 Solo busca sobre las entradas entregadas al servicio; no presenta una página remota
 parcial como si fueran las 444 casas del archivo.
 
-La estrategia actual evita descargar las nueve páginas máximas en cada navegación:
+`/casas` separa dos colecciones con coberturas distintas:
 
-- La metadata de las siete casas major está disponible sin red.
-- `loadMajorHouses` puede obtener esas siete entidades por detalle y reutiliza el
-  lector respaldado por TanStack Query.
-- El catálogo general continúa paginado mediante `getHouses({ page, pageSize })`.
-- Cada página cargada puede convertirse, ordenarse y buscarse localmente.
-- La búsqueda parcial global sobre las 444 casas requerirá acumular un snapshot
-  completo o sincronizar un índice propio; no se simula todavía.
+- “Las grandes casas” recorre `MAJOR_HOUSE_METADATA` y usa `loadMajorHouses` para
+  resolver por detalle las siete entidades exactas. La metadata decide identidad,
+  orden, nombre corto y tema; nombre completo, región, lema y asientos proceden de la
+  entidad remota. Las resoluciones correctas se conservan si otra major falla.
+- “Archivo de casas” solicita una sola página remota de 12 elementos mediante
+  `getHouseArchivePage`. El cliente preserva las relaciones `first`, `prev`, `next` y
+  `last` del header HTTP `Link`; no deduce páginas por el tamaño del cuerpo ni fija un
+  total propio.
+- Cada página cargada se proyecta con `buildHouseArchiveEntries`, mantiene todas sus
+  casas menores y puede ordenarse, buscarse y filtrarse localmente. Las cards de este
+  bloque usan iconografía genérica para no prestarles la identidad de una casa major.
+- La búsqueda por nombre, `shortName`, región, lema o asiento, y el filtro de región,
+  cubren exclusivamente la página cargada. La interfaz declara este alcance. La lista
+  de regiones se deriva de esas entidades y conserva los valores geográficos de la
+  fuente.
+- Una búsqueda parcial global requerirá acumular un snapshot completo o sincronizar un
+  índice propio; no se descarga el archivo entero durante una visita ni se simula esa
+  cobertura.
 
 ### Relaciones de casas
 
@@ -246,10 +257,23 @@ sus claves de detalle. La query exterior no reintenta el bundle completo: un fal
 secundario se conserva en `relationFailures`, mientras que un fallo de la casa principal
 mantiene los estados de error o recurso inexistente de la ruta.
 
+`useMajorHouses` envuelve la colección prioritaria con una clave estable y delega cada
+detalle al lector canónico. Al volver a intentar una carga parcial, las entidades
+correctas aún frescas se reutilizan y solo las ausentes necesitan red. La página de
+archivo usa otra clave que incluye sus parámetros remotos y mantiene la página anterior
+mientras llega la siguiente. Cada entidad de lista normalizada también puede sembrar su
+clave de detalle, de modo que abrir una casa cargada no exige repetir su petición.
+
 ### Features y UI
 
 Las features deciden cómo presentar y relacionar modelos internos. Los componentes
 compartidos no realizan llamadas de red ni interpretan URLs de la fuente.
+
+La página de archivo mantiene independientes carga y error de las majors y de la página
+remota. Un fallo de una major no oculta las otras seis ni el archivo; un fallo de la
+página tampoco elimina las majors. El grid usa enlaces construidos con el `sourceId` de
+cada entidad y reserva los facts de sus cards a nombre, región, asiento, lema e identidad
+de casa, sin liderazgo, estado narrativo o relaciones futuras.
 
 La conexión de la ficha de casa recibe exclusivamente `HouseDataBundle`. Proyecta
 `currentLord` como cabeza actual, expone `heir`, `founder`, `overlord` y

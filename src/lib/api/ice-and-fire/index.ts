@@ -1,9 +1,13 @@
 export { IceAndFireApiError } from './api_client'
 export { getCharacter, getCharacters } from './character_api'
 export { normalizeCharacter } from './character_normalizer'
-export { getHouse, getHouses } from './house_api'
+export { getHouse, getHouseArchivePage, getHouses } from './house_api'
 export { normalizeHouse } from './house_normalizer'
-export type { ResourceListParams } from './internal_types'
+export type {
+  ResourceListParams,
+  ResourcePage,
+  ResourcePagination,
+} from './internal_types'
 export {
   createCanonicalId,
   createSourceIdentity,

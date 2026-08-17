@@ -15,6 +15,11 @@ const houseNameCollator = new Intl.Collator('es', {
   sensitivity: 'base',
 })
 
+const houseRegionCollator = new Intl.Collator('en', {
+  numeric: true,
+  sensitivity: 'base',
+})
+
 const FIELD_MULTIPLIERS: Readonly<Record<HouseSearchField, number>> = {
   name: 12,
   shortName: 14,
@@ -65,6 +70,22 @@ export function sortHouseArchiveEntries(
       left.canonicalId.localeCompare(right.canonicalId)
     )
   })
+}
+
+export function getHouseArchiveRegions(
+  entries: readonly HouseArchiveEntry[],
+): string[] {
+  return [...new Set(entries.flatMap((entry) => (entry.region ? [entry.region] : [])))]
+    .sort(houseRegionCollator.compare)
+}
+
+export function filterHouseArchiveEntriesByRegion(
+  entries: readonly HouseArchiveEntry[],
+  region: string,
+): HouseArchiveEntry[] {
+  return region === ''
+    ? [...entries]
+    : entries.filter((entry) => entry.region === region)
 }
 
 export function createHouseSearchDocument(

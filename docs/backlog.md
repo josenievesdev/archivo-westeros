@@ -21,7 +21,6 @@ no representa prioridad ni compromiso de entrega.
 
 ## Casas
 
-- Conectar la ficha visual a `HouseDataBundle` sin alterar sus semánticas.
 - Mostrar `swornMembers` como personajes reportados por la fuente, con carga progresiva.
 - Mostrar `cadetBranches` como ramas, no como casas juramentadas.
 - Derivar casas vasallas desde `overlordId` solo sobre un snapshot completo y etiquetar cobertura.
@@ -29,7 +28,8 @@ no representa prioridad ni compromiso de entrega.
 - Derivar la configuración de Home desde `MAJOR_HOUSE_METADATA` al conectar la nueva capa.
 - Relacionar armas ancestrales con propietarios y periodos.
 - Incorporar heráldica con fuentes y licencias verificadas.
-- Filtrar por región y estado.
+- Ampliar región y estado al archivo global cuando exista un snapshot con cobertura explícita.
+- Realizar el polish visual específico de `/casas` sin alterar su jerarquía major/archivo.
 
 ## Spoilers
 
@@ -89,7 +89,7 @@ no representa prioridad ni compromiso de entrega.
 - Migrar el catálogo editorial tipado sin cambiar IDs canónicos ni contratos de UI.
 - Ampliar metadata, traducciones y documentos de búsqueda más allá del conjunto curado.
 - Definir caché, invalidación y funcionamiento degradado.
-- Preservar metadata de paginación (`Link`) y distinguir snapshots completos, parciales y truncados.
+- Extender la preservación del header de paginación `Link` más allá del archivo de casas.
 - Sincronizar un índice de las 444 casas para búsqueda parcial global sin descargas por navegación.
 - Registrar URLs de relación malformadas como diagnósticos sin confundirlas con referencias ausentes.
 

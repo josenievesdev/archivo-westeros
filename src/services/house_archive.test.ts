@@ -10,6 +10,8 @@ import { normalizeHouse } from '../lib/api/ice-and-fire/house_normalizer'
 import {
   buildHouseArchiveEntries,
   createHouseSearchDocument,
+  filterHouseArchiveEntriesByRegion,
+  getHouseArchiveRegions,
   searchHouseArchiveEntries,
   sortHouseArchiveEntries,
 } from './house_archive'
@@ -74,6 +76,22 @@ describe('archivo y búsqueda de casas', () => {
     const results = searchHouseArchiveEntries(entries, 'The North')
 
     expect(results.map((entry) => entry.sourceId)).toEqual(['362', '3'])
+  })
+
+  test('deriva regiones de los registros cargados y filtra por valor de fuente', () => {
+    const regions = getHouseArchiveRegions(entries)
+    const northernHouses = filterHouseArchiveEntriesByRegion(entries, 'The North')
+
+    expect(regions).toEqual([
+      'Dorne',
+      'Iron Islands',
+      'The Crownlands',
+      'The North',
+      'The Reach',
+      'The Stormlands',
+      'The Westerlands',
+    ])
+    expect(northernHouses.map((entry) => entry.sourceId)).toEqual(['3', '362'])
   })
 
   test('crea un documento solo con campos semánticos de búsqueda', () => {

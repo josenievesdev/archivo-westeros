@@ -203,3 +203,26 @@ cabeza actual, pero `founder` y `heir` no forman una cronología; `overlord` y
 proceden únicamente de `swornMembers` resueltos y no reciben estado, relevancia o títulos
 inventados. Esta proyección permite mantener la ficha existente sin trasladar
 ambigüedades visuales al dominio.
+
+## ADR-020 — Grandes casas y archivo paginado
+
+**Decisión:** separar `/casas` en una colección editorial de siete majors y una página
+del archivo remoto. Las majors se enumeran desde `MAJOR_HOUSE_METADATA`, pero sus facts
+se obtienen de las entidades reales mediante `loadMajorHouses` y el lector canónico. El
+archivo usa páginas de 12 y conserva las relaciones de navegación del header `Link`.
+
+La búsqueda por nombre, nombre corto, región, lema y asiento, además del filtro de
+región, operan solo sobre la página ya cargada y lo declaran en la interfaz. No se
+descarga un snapshot completo en cada visita. Las casas menores permanecen en el
+archivo con iconografía genérica; no heredan temas major por coincidencia de nombre.
+
+**Razón:** el orden de la primera página de la API no representa la prioridad del
+producto, pero sustituirlo por siete objetos editoriales duplicaría hechos y ocultaría
+el resto del catálogo. Dos queries independientes permiten priorizar las entidades más
+útiles, mantener paginación real y degradar cada sección por separado. Las claves de
+detalle compartidas reutilizan cache al abrir una ficha, y los fallos parciales de
+majors no bloquean las entidades disponibles.
+
+La búsqueda global y el filtro global quedan pendientes de un snapshot o índice
+sincronizado con cobertura explícita. El polish visual del archivo también queda fuera
+de esta decisión estructural.

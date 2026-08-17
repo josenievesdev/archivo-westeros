@@ -2,6 +2,11 @@ import { iceAndFireApiUrl } from '../../../config/environment'
 
 type QueryValue = number | string | undefined
 
+export interface ApiResponse<T> {
+  data: T
+  headers: Headers
+}
+
 export class IceAndFireApiError extends Error {
   readonly status: number
 
@@ -12,11 +17,11 @@ export class IceAndFireApiError extends Error {
   }
 }
 
-export async function apiGet<T>(
+export async function apiGetWithHeaders<T>(
   path: string,
   query: Record<string, QueryValue> = {},
   signal?: AbortSignal,
-): Promise<T> {
+): Promise<ApiResponse<T>> {
   const url = new URL(`${iceAndFireApiUrl}${path}`)
 
   Object.entries(query).forEach(([key, value]) => {
@@ -37,5 +42,17 @@ export async function apiGet<T>(
     )
   }
 
-  return response.json() as Promise<T>
+  return {
+    data: (await response.json()) as T,
+    headers: response.headers,
+  }
+}
+
+export async function apiGet<T>(
+  path: string,
+  query: Record<string, QueryValue> = {},
+  signal?: AbortSignal,
+): Promise<T> {
+  const response = await apiGetWithHeaders<T>(path, query, signal)
+  return response.data
 }
