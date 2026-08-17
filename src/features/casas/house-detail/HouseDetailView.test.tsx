@@ -119,6 +119,29 @@ describe('HouseDetailView', () => {
     expect(container.querySelector('.house-detail__facts')).toBeNull()
   })
 
+  it('renderiza el tema neutral sin romperse', () => {
+    const { container } = renderView({
+      ...targaryenHouseDetailFixture,
+      displayName: 'House Blackfyre',
+      heraldry: undefined,
+      name: 'Blackfyre',
+      theme: 'neutral',
+    })
+
+    expect(container.querySelector('.house-detail')).toHaveAttribute(
+      'data-house',
+      'neutral',
+    )
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Blackfyre' }),
+    ).toBeInTheDocument()
+    // La estructura no cambia: sigue habiendo secciones, no heráldica prestada.
+    expect(screen.getByRole('heading', { name: 'Miembros relevantes' })).toBeInTheDocument()
+    expect(
+      screen.queryByRole('region', { name: 'Armas y colores' }),
+    ).not.toBeInTheDocument()
+  })
+
   it('no depende de llamadas de red', () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch')
 

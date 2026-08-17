@@ -1,4 +1,4 @@
-import { getHouseThemeFromName } from '../../../components/ui/house-theme'
+import { resolveHouseTheme } from '../../../components/ui/house-theme'
 import type { CanonicalHouse } from '../../../lib/domain/canonical_entities'
 import type { HouseDetailViewModel } from './house-detail.types'
 
@@ -48,9 +48,9 @@ export function toHouseDetailViewModel(house: CanonicalHouse): HouseDetailViewMo
     statusTone: house.diedOut ? 'extinct' : undefined,
     swornHouses: [],
     swornHousesCount: house.cadetBranchIds.length || undefined,
-    // Fuera de las siete grandes casas no hay tema: cae a la piedra fría de
-    // Stark, el más neutro de la paleta, en vez de teñir con un color ajeno.
-    theme: getHouseThemeFromName(house.name) ?? 'stark',
+    // Fuera de las siete grandes casas la ficha se pinta en piedra: una casa
+    // menor no hereda la identidad visual de otra.
+    theme: resolveHouseTheme(house.name),
     words: house.words ?? undefined,
   }
 }

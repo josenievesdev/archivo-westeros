@@ -216,6 +216,21 @@ input[type="search"]::-webkit-search-decoration {
   --house-metal-deep: #201911;
 }
 
+/* Casas menores y desconocidas: piedra oscura y oro viejo muy contenido. Ni el
+   hielo de Stark, ni el fuego Targaryen, ni el oro Lannister.
+   La escala base del proyecto (relieve, grabado, piedra) es gris azulada, así
+   que la piedra tallada se define aquí neutra con un punto cálido: con los
+   tokens fríos el pedestal se leía como el acero Stark desaturado.
+   Añadir el bloque no altera a las siete casas ni a la Home, que nunca emiten
+   `data-house="neutral"`. */
+[data-house="neutral"] {
+  --house-accent: var(--color-old-gold);
+  --house-metal-shadow: #232322;
+  --house-metal-highlight: #45433d;
+  --house-metal-mid: #2e2d2a;
+  --house-metal-deep: #131313;
+}
+
 .house-sigil {
   display: inline-flex;
   flex: none;

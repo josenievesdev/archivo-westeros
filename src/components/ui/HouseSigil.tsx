@@ -3,6 +3,7 @@ import {
   Crown,
   Flame,
   Flower2,
+  Shield,
   Snowflake,
   Sun,
   Zap,
@@ -12,14 +13,16 @@ import type { HTMLAttributes } from 'react'
 import { cx } from '../../lib/utils/cx'
 import type { HouseTheme } from './house-theme'
 
-const houseNames: Record<HouseTheme, string> = {
-  stark: 'Stark',
-  lannister: 'Lannister',
-  targaryen: 'Targaryen',
-  baratheon: 'Baratheon',
-  greyjoy: 'Greyjoy',
-  tyrell: 'Tyrell',
-  martell: 'Martell',
+const houseLabels: Record<HouseTheme, string> = {
+  stark: 'Símbolo de la casa Stark',
+  lannister: 'Símbolo de la casa Lannister',
+  targaryen: 'Símbolo de la casa Targaryen',
+  baratheon: 'Símbolo de la casa Baratheon',
+  greyjoy: 'Símbolo de la casa Greyjoy',
+  tyrell: 'Símbolo de la casa Tyrell',
+  martell: 'Símbolo de la casa Martell',
+  // Ni el nombre ni el dibujo prestan identidad: es un escudo vacío.
+  neutral: 'Emblema genérico de casa',
 }
 
 const houseIcons: Record<HouseTheme, LucideIcon> = {
@@ -30,6 +33,8 @@ const houseIcons: Record<HouseTheme, LucideIcon> = {
   greyjoy: Anchor,
   tyrell: Flower2,
   martell: Sun,
+  // Escudo sin carga: marca que la casa existe sin inventarle armas.
+  neutral: Shield,
 }
 
 interface HouseSigilProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'children'> {
@@ -53,7 +58,7 @@ export function HouseSigil({
   return (
     <span
       aria-hidden={decorative || undefined}
-      aria-label={decorative ? undefined : (label ?? `Símbolo de la casa ${houseNames[house]}`)}
+      aria-label={decorative ? undefined : (label ?? houseLabels[house])}
       className={cx('house-sigil', className)}
       data-house={house}
       role={decorative ? undefined : 'img'}
