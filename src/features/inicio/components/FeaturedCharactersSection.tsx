@@ -2,7 +2,6 @@ import {
   ArrowRight,
   ChevronDown,
   Clapperboard,
-  Filter,
   Handshake,
   HeartPulse,
   Map,
@@ -36,10 +35,7 @@ export function FeaturedCharactersSection() {
         </header>
 
         <div aria-label="Filtros disponibles en la futura búsqueda completa" className="featured-filters">
-          <span className="featured-filters__label">
-            <Filter aria-hidden="true" className="size-3.5" />
-            Filtrar
-          </span>
+          <span className="featured-filters__label">Filtrar</span>
           {filters.map((filter, index) => {
             const Icon = filter.icon
             return (

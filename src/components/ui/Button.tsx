@@ -19,8 +19,9 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
+  // Oro batido, no plástico: degradado plano de Pen sin reflejo interior.
   primary:
-    'border-transparent bg-gradient-to-b from-gold-light to-gold-shadow text-void shadow-[0_1px_0_#f6d98c_inset] hover:brightness-110',
+    'border-transparent bg-gradient-to-b from-gold-light to-gold-shadow text-[#14100a] hover:brightness-110',
   secondary:
     'border-etch bg-white/[0.04] text-bone hover:border-old-gold hover:bg-white/[0.07]',
   ghost: 'border-transparent bg-transparent text-parchment hover:bg-white/[0.05] hover:text-bone',

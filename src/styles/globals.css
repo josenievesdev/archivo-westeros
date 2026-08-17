@@ -75,11 +75,15 @@ body {
   min-height: 100vh;
 }
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
+/* En `@layer base` para que las utilidades de fuente sigan ganando: sin capa,
+   este atajo anulaba `font-serif` / `text-*` en inputs y botones. */
+@layer base {
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
 }
 
 button,
@@ -95,6 +99,18 @@ a {
 ::selection {
   color: var(--color-void);
   background: var(--color-gold-light);
+}
+
+/* El campo ya ofrece su propio botón de limpiar: fuera la decoración nativa. */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  appearance: none;
+}
+
+/* El foco lo marca el marco del buscador (borde oro + anillo), no un segundo
+   contorno dibujado por dentro del campo. */
+.search-field--prominent input:focus-visible {
+  outline: none;
 }
 
 .archive-container {
@@ -246,8 +262,10 @@ a {
   width: 14.25rem;
   height: 9.375rem;
   border-radius: 50%;
+  /* Pen dimensiona el foco al 50% de la caja: con `at center` el radio pasa a
+     ser el de la esquina más lejana y el halo crece un 41%. */
   background: radial-gradient(
-    ellipse at center,
+    ellipse 50% 50% at 50% 50%,
     color-mix(in srgb, var(--house-accent) 35%, transparent) 0%,
     transparent 100%
   );
@@ -370,7 +388,7 @@ a {
   height: 1.375rem;
   border-radius: 50%;
   background: radial-gradient(
-    ellipse at center,
+    ellipse 50% 50% at 50% 50%,
     color-mix(in srgb, var(--house-accent) 30%, transparent),
     transparent 100%
   );
@@ -419,6 +437,11 @@ a {
   right: 1.25rem;
   left: 1.25rem;
   height: 1rem;
+  background: radial-gradient(
+    ellipse 50% 50% at 50% 50%,
+    color-mix(in srgb, var(--house-accent) 24%, transparent),
+    transparent 100%
+  );
   filter: blur(0.21875rem);
   opacity: 0.38;
 }
@@ -527,9 +550,9 @@ a {
   overflow: hidden;
   background: linear-gradient(
     180deg,
-    var(--house-metal-highlight),
-    var(--house-metal-mid) 52%,
-    var(--color-void)
+    var(--house-metal-highlight) 0%,
+    var(--house-metal-mid) 50%,
+    #0d0f13 100%
   );
 }
 
@@ -552,11 +575,18 @@ a {
   aspect-ratio: auto;
 }
 
+/* Pen ancla el sigilo de fondo a 52px del borde superior, no al centro
+   óptico: la marca queda por encima del velo y no compite con el nombre. */
 .character-card--featured .character-card__media > .house-sigil:not(.character-card__corner-sigil) {
+  position: absolute;
+  top: 3.25rem;
+  left: 50%;
+  z-index: 1;
   width: 8.125rem !important;
   height: 8.125rem !important;
   filter: none;
   opacity: 0.11;
+  transform: translateX(-50%);
 }
 
 .character-card--featured .character-card__media > .house-sigil:not(.character-card__corner-sigil) svg {
@@ -566,13 +596,14 @@ a {
 }
 
 .character-card--featured .character-card__media::after {
+  z-index: 2;
   inset: 7.5rem 0 0;
   background: linear-gradient(180deg, #0d0f1300 0%, #0d0f13cc 60%, #0d0f13 100%);
 }
 
 .character-card--featured > div:last-child {
   min-height: 6.125rem;
-  padding: 1rem 1rem 1rem;
+  padding: 1rem 1rem 1.125rem;
 }
 
 .character-card--featured h2 {

@@ -1,6 +1,15 @@
 .home-page {
+  /* El Hero de Pen mide 980px e incluye la barra de navegación: la página sube
+     bajo la cabecera para que la atmósfera del Hero la ilumine por detrás. */
+  margin-top: -4rem;
   overflow: clip;
   background: var(--color-void);
+}
+
+@media (min-width: 48rem) {
+  .home-page {
+    margin-top: -5rem;
+  }
 }
 
 .home-content-width {
@@ -16,7 +25,7 @@
   font-size: 0.65625rem;
   font-weight: 400;
   letter-spacing: 0.275rem;
-  line-height: 0.75rem;
+  line-height: normal;
   text-transform: uppercase;
 }
 
@@ -28,14 +37,15 @@
   color: var(--color-flame);
 }
 
+/* Pen reparte el aire 18px arriba / 26px abajo: el filete no queda centrado. */
 .home-ornament {
   display: flex;
   width: 9.3125rem;
-  height: 3.3125rem;
   align-items: center;
   justify-content: center;
   gap: 0.625rem;
   margin-inline: auto;
+  padding-block: 1.125rem 1.625rem;
 }
 
 .home-ornament span {
@@ -63,10 +73,11 @@
   color: var(--color-gold);
   font-family: var(--font-sans);
   font-size: 0.6875rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.2em;
   padding-inline: 1.625rem;
   text-transform: uppercase;
   transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+  white-space: nowrap;
 }
 
 .home-outline-link:hover {
@@ -77,7 +88,7 @@
 
 .home-hero {
   position: relative;
-  min-height: 56.25rem;
+  min-height: 61.25rem;
   isolation: isolate;
   overflow: hidden;
   background: linear-gradient(180deg, #161b22 0%, #0e1218 42%, #0a0c10 72%, #08090b 100%);
@@ -98,11 +109,11 @@
 
 .home-hero::after {
   z-index: 2;
-  top: 3.75rem;
+  top: 8.75rem;
   right: 0;
   width: 42.5rem;
   height: 42.5rem;
-  background: radial-gradient(ellipse at center, #c4452a66 0%, #c4452a00 100%);
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, #c4452a66 0%, #c4452a00 100%);
   opacity: 0.5;
 }
 
@@ -123,17 +134,17 @@
 }
 
 .home-hero__ice-light {
-  top: -31.25rem;
+  top: -26.25rem;
   left: 21.25rem;
   width: 47.5rem;
   height: 56.25rem;
-  background: radial-gradient(ellipse at center, #9fbbcc38 0%, #9fbbcc00 100%);
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, #9fbbcc38 0%, #9fbbcc00 100%);
   opacity: 0.5;
 }
 
 .home-hero__beam {
   position: absolute;
-  top: -25rem;
+  top: -20rem;
   height: 93.75rem;
   background: linear-gradient(180deg, #cfe2ee 0%, #cfe2ee00 100%);
   filter: blur(1.0625rem);
@@ -170,28 +181,30 @@
 }
 
 .home-hero__ember-light {
-  top: 27.5rem;
+  top: 32.5rem;
   left: 51.25rem;
   width: 56.25rem;
   height: 38.75rem;
-  background: radial-gradient(ellipse at center, #c4452a4d 0%, #c4452a00 100%);
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, #c4452a4d 0%, #c4452a00 100%);
   filter: blur(2.1875rem);
   opacity: 0.45;
 }
 
 .home-hero__ember-left {
-  top: 32.5rem;
+  top: 37.5rem;
   left: -16.25rem;
   width: 40rem;
   height: 32.5rem;
-  background: radial-gradient(ellipse at center, #8a5a2a4d 0%, #8a5a2a00 100%);
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, #8a5a2a4d 0%, #8a5a2a00 100%);
   filter: blur(2.1875rem);
   opacity: 0.22;
 }
 
+/* Pen apaga el borde interior de la caja de luz (x=300 y x=1140) y deja que el
+   canto exterior conserve el rebote: no es una viñeta convencional. */
 .home-hero__vignette {
   position: absolute;
-  top: -5rem;
+  top: 0;
   width: 18.75rem;
   height: 61.25rem;
   opacity: 0.85;
@@ -199,12 +212,12 @@
 
 .home-hero__vignette--left {
   left: 0;
-  background: linear-gradient(90deg, #08090b 0%, #08090b00 100%);
+  background: linear-gradient(-90deg, #08090b 0%, #08090b00 100%);
 }
 
 .home-hero__vignette--right {
   right: 0;
-  background: linear-gradient(-90deg, #08090b 0%, #08090b00 100%);
+  background: linear-gradient(90deg, #08090b 0%, #08090b00 100%);
 }
 
 .home-hero__ember {
@@ -216,16 +229,16 @@
   filter: blur(0.6px);
 }
 
-.home-hero__ember[data-ember="880-300"] { top: 13.75rem; left: 55rem; opacity: 0.5; }
-.home-hero__ember[data-ember="960-420"] { top: 21.25rem; left: 60rem; width: 0.125rem; height: 0.125rem; opacity: 0.35; }
-.home-hero__ember[data-ember="1040-250"] { top: 10.625rem; left: 65rem; opacity: 0.45; }
-.home-hero__ember[data-ember="1120-500"] { top: 26.25rem; left: 70rem; width: 0.125rem; height: 0.125rem; opacity: 0.3; }
-.home-hero__ember[data-ember="820-560"] { top: 30rem; left: 51.25rem; opacity: 0.4; }
-.home-hero__ember[data-ember="1200-360"] { top: 17.5rem; left: 75rem; opacity: 0.35; }
-.home-hero__ember[data-ember="760-420"] { top: 21.25rem; left: 47.5rem; width: 0.125rem; height: 0.125rem; opacity: 0.28; }
-.home-hero__ember[data-ember="1010-600"] { top: 32.5rem; left: 63.125rem; opacity: 0.32; }
-.home-hero__ember[data-ember="1160-220"] { top: 8.75rem; left: 72.5rem; width: 0.125rem; height: 0.125rem; opacity: 0.4; }
-.home-hero__ember[data-ember="900-660"] { top: 36.25rem; left: 56.25rem; opacity: 0.26; }
+.home-hero__ember[data-ember="880-300"] { top: 18.75rem; left: 55rem; opacity: 0.5; }
+.home-hero__ember[data-ember="960-420"] { top: 26.25rem; left: 60rem; width: 0.125rem; height: 0.125rem; opacity: 0.35; }
+.home-hero__ember[data-ember="1040-250"] { top: 15.625rem; left: 65rem; width: 0.15625rem; height: 0.15625rem; opacity: 0.45; }
+.home-hero__ember[data-ember="1120-500"] { top: 31.25rem; left: 70rem; width: 0.125rem; height: 0.125rem; opacity: 0.3; }
+.home-hero__ember[data-ember="820-560"] { top: 35rem; left: 51.25rem; opacity: 0.4; }
+.home-hero__ember[data-ember="1200-360"] { top: 22.5rem; left: 75rem; width: 0.15625rem; height: 0.15625rem; opacity: 0.35; }
+.home-hero__ember[data-ember="760-420"] { top: 26.25rem; left: 47.5rem; width: 0.125rem; height: 0.125rem; opacity: 0.28; }
+.home-hero__ember[data-ember="1010-600"] { top: 37.5rem; left: 63.125rem; opacity: 0.32; }
+.home-hero__ember[data-ember="1160-220"] { top: 13.75rem; left: 72.5rem; width: 0.125rem; height: 0.125rem; opacity: 0.4; }
+.home-hero__ember[data-ember="900-660"] { top: 41.25rem; left: 56.25rem; width: 0.15625rem; height: 0.15625rem; opacity: 0.26; }
 
 :root[data-atmosphere="ice"] .home-hero__ice-light { opacity: 0.68; }
 :root[data-atmosphere="ice"] .home-hero__beam { opacity: 0.075; }
@@ -245,10 +258,12 @@
   width: 100%;
   flex-direction: column;
   align-items: center;
-  padding-top: 4.25rem;
+  padding-top: 9.25rem;
   text-align: center;
 }
 
+/* Sin `text-transform`: en Cinzel las minúsculas son versalitas y ese es el
+   ritmo del titular de Pen. */
 .home-hero__title {
   width: min(calc(100% - 2.5rem), 60rem);
   margin: 0;
@@ -256,9 +271,8 @@
   font-family: var(--font-display);
   font-size: 4.125rem;
   font-weight: 600;
-  letter-spacing: -0.008em;
+  letter-spacing: -0.5px;
   line-height: 4.4375rem;
-  text-transform: uppercase;
 }
 
 .home-hero__accent {
@@ -269,7 +283,7 @@
   font-family: var(--font-serif);
   font-size: 3.5rem;
   font-style: italic;
-  line-height: 1.15;
+  line-height: 4rem;
 }
 
 .home-hero__description {
@@ -305,7 +319,7 @@
 .home-search__quick-label {
   flex: none;
   padding-block: 0.5rem;
-  color: var(--color-parchment);
+  color: var(--color-ash);
   font-family: var(--font-sans);
   font-size: 0.625rem;
   letter-spacing: 0.1375rem;
@@ -445,7 +459,7 @@
   font-family: var(--font-sans);
   font-size: 0.625rem;
   letter-spacing: 0.2em;
-  text-transform: uppercase;
+  line-height: normal;
 }
 
 .great-houses-section {
@@ -523,7 +537,7 @@
   width: 55rem;
   height: 15.625rem;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, #c4452a59 0%, #c4452a00 100%);
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, #c4452a59 0%, #c4452a00 100%);
   opacity: 0.34;
 }
 
@@ -590,20 +604,27 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
   padding: 1.5rem 1.25rem 5rem;
   text-align: center;
 }
 
-.great-houses-footer p {
-  margin: 0;
-  color: var(--color-parchment);
-  font-family: var(--font-serif);
-  font-size: 1rem;
+/* Pen da 30px de aire lateral al botón del tablero (26px en Linajes). */
+.great-houses-footer .home-outline-link {
+  padding-inline: 1.875rem;
 }
 
+.great-houses-footer p {
+  margin: 0;
+  color: var(--color-ash);
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-style: italic;
+}
+
+/* Pen dimensiona el botón al contenido; el ancho fijo partía el rótulo. */
 .great-houses-footer .home-outline-link {
-  width: 15.75rem;
+  max-width: 100%;
 }
 
 .featured-characters-section {
@@ -628,7 +649,7 @@
   font-family: var(--font-display);
   font-size: 2.375rem;
   font-weight: 600;
-  line-height: 1.3;
+  line-height: normal;
 }
 
 .featured-characters-header > a {
@@ -639,7 +660,7 @@
   color: var(--color-gold);
   font-family: var(--font-sans);
   font-size: 0.6875rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
@@ -664,9 +685,9 @@
 }
 
 .featured-filters__label {
-  color: var(--color-parchment);
-  font-size: 0.625rem;
-  letter-spacing: 0.14em;
+  color: var(--color-ash);
+  font-size: 0.59375rem;
+  letter-spacing: 0.125rem;
   padding-inline-end: 0.25rem;
   text-transform: uppercase;
 }
@@ -789,6 +810,8 @@
   background-image:
     linear-gradient(#ffffff06 1px, transparent 1px),
     linear-gradient(90deg, #ffffff06 1px, transparent 1px);
+  /* La retícula de Pen arranca en el canto del panel, no tras el borde. */
+  background-origin: border-box;
   background-size: 4.625rem 4.625rem;
 }
 
@@ -979,12 +1002,20 @@
 }
 
 .immersion-feature {
+  position: relative;
   min-width: 0;
   padding: 0.5rem 2.625rem;
 }
 
-.immersion-feature + .immersion-feature {
-  border-left: 1px solid var(--color-etch);
+/* Pen usa filetes sueltos de 210px, no bordes que recorran toda la columna. */
+.immersion-feature + .immersion-feature::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 13.125rem;
+  background: var(--color-etch);
+  content: "";
 }
 
 .immersion-feature__marker {
@@ -1023,15 +1054,15 @@
 .home-footer {
   min-height: 21rem;
   background: var(--color-void);
+  padding-bottom: 2.75rem;
 }
 
 .home-footer__main {
   display: grid;
-  min-height: 15.75rem;
   align-items: start;
   grid-template-columns: 21.25rem 7.1875rem 6.1875rem 6.8125rem;
   justify-content: space-between;
-  padding-top: 4.375rem;
+  padding-block: 4.375rem 3.375rem;
 }
 
 .home-footer__brand > div {
@@ -1047,7 +1078,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.2em;
-  text-transform: uppercase;
+  line-height: normal;
 }
 
 .home-footer__brand > p {
@@ -1062,9 +1093,10 @@
   margin: 0;
   color: var(--color-old-gold);
   font-family: var(--font-sans);
-  font-size: 0.625rem;
+  font-size: 0.59375rem;
   font-weight: 400;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15rem;
+  line-height: normal;
   text-transform: uppercase;
 }
 
@@ -1079,6 +1111,7 @@
   color: var(--color-parchment);
   font-family: var(--font-sans);
   font-size: 0.8125rem;
+  line-height: normal;
   list-style: none;
   white-space: nowrap;
 }
@@ -1094,18 +1127,18 @@
 
 .home-footer__legal {
   display: flex;
-  min-height: 4rem;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--color-etch);
-  padding-block: 1.375rem 0.25rem;
+  padding-block: 1.375rem 0;
 }
 
 .home-footer__legal p {
   margin: 0;
-  color: var(--color-parchment);
+  color: var(--color-ash);
   font-family: var(--font-sans);
   font-size: 0.71875rem;
+  line-height: normal;
 }
 
 .home-footer__legal p:last-child {
@@ -1132,8 +1165,11 @@
 }
 
 @media (min-width: 79rem) {
+  /* `items-start` como en Pen: la ficha que parte el nombre en dos crece sola
+     en lugar de estirar a todas las demás. */
   .featured-characters-track {
     display: grid;
+    align-items: start;
     gap: 1.625rem;
     grid-template-columns: repeat(5, 14rem);
     overflow: visible;
@@ -1198,7 +1234,7 @@
   }
 
   .home-hero__content {
-    padding-block: 4.5rem 3.5rem;
+    padding-block: calc(5rem + 4.5rem) 3.5rem;
   }
 
   .home-hero__title {
@@ -1251,11 +1287,11 @@
   }
 
   .home-hero__content {
-    padding-block-start: 3.5rem;
+    padding-block-start: calc(4rem + 3.5rem);
   }
 
   .home-ornament {
-    height: 2.75rem;
+    padding-block: 0.875rem 1.25rem;
   }
 
   .home-hero__title {
@@ -1413,7 +1449,10 @@
 
   .immersion-feature + .immersion-feature {
     border-top: 1px solid var(--color-etch);
-    border-left: 0;
+  }
+
+  .immersion-feature + .immersion-feature::before {
+    display: none;
   }
 
   .home-footer {

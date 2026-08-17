@@ -84,7 +84,7 @@ export function SearchField({
         </label>
         <div
           className={cx(
-            'group relative flex items-center rounded-etched border border-old-gold bg-[#0d0f13e6] shadow-search transition-[border-color,box-shadow] focus-within:border-gold focus-within:shadow-[0_0_0_1px_#c9a44c40,0_24px_60px_-10px_#000000b3]',
+            'group relative flex items-center rounded-etched border border-old-gold bg-[#0d0f13e6] shadow-search transition-[border-color,box-shadow] focus-within:border-gold focus-within:shadow-[0_0_0_2px_#c9a44c59,0_24px_60px_-10px_#000000b3]',
             prominent
               ? 'h-[4.875rem] gap-4 py-0 pr-[0.625rem] pl-[1.625rem]'
               : 'min-h-16 gap-2 p-2 pl-4 sm:pl-6',
@@ -92,21 +92,23 @@ export function SearchField({
         >
           {prominent && (
             <>
+              {/* Cantoneras: en Pen son escuadras completas de 10px que
+                  cabalgan la esquina, no medias esquinas. */}
               <span
                 aria-hidden="true"
-                className="absolute -top-[0.3125rem] -left-[0.3125rem] size-2.5 border-t border-l border-gold"
+                className="absolute -top-[0.3125rem] -left-[0.3125rem] size-2.5 border border-gold"
               />
               <span
                 aria-hidden="true"
-                className="absolute -top-[0.3125rem] -right-[0.3125rem] size-2.5 border-t border-r border-gold"
+                className="absolute -top-[0.3125rem] -right-[0.3125rem] size-2.5 border border-gold"
               />
               <span
                 aria-hidden="true"
-                className="absolute -bottom-[0.3125rem] -left-[0.3125rem] size-2.5 border-b border-l border-gold"
+                className="absolute -bottom-[0.3125rem] -left-[0.3125rem] size-2.5 border border-gold"
               />
               <span
                 aria-hidden="true"
-                className="absolute -right-[0.3125rem] -bottom-[0.3125rem] size-2.5 border-r border-b border-gold"
+                className="absolute -right-[0.3125rem] -bottom-[0.3125rem] size-2.5 border border-gold"
               />
             </>
           )}
@@ -120,7 +122,7 @@ export function SearchField({
             aria-keyshortcuts={shortcut ? 'Meta+K Control+K' : undefined}
             aria-describedby={describedBy || undefined}
             className={cx(
-              'min-h-12 min-w-0 flex-1 border-0 bg-transparent px-1 font-serif text-base text-bone outline-none placeholder:text-parchment disabled:cursor-not-allowed disabled:opacity-50 sm:text-lg',
+              'min-h-12 min-w-0 flex-1 border-0 bg-transparent px-1 font-serif text-base text-bone outline-none placeholder:text-ash disabled:cursor-not-allowed disabled:opacity-50 sm:text-lg',
               prominent && 'px-0 sm:text-xl',
             )}
             disabled={disabled}
