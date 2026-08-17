@@ -1,9 +1,15 @@
 import { Link } from 'react-router-dom'
+import { cx } from '../../lib/utils/cx'
 import { HouseBadge, StatusBadge, type StatusBadgeState } from './Badge'
 import { HouseSigil } from './HouseSigil'
 import type { HouseTheme } from './house-theme'
 
-type CharacterCardVariant = 'default' | 'featured'
+/**
+ * `house-member` reutiliza el retrato vertical de `featured` (la Tarjeta
+ * Personaje de Pen) y solo añade un gancho de clase para que la ficha de casa
+ * la lleve al ancho de su rejilla.
+ */
+type CharacterCardVariant = 'default' | 'featured' | 'house-member'
 
 interface CharacterCardProps {
   actor?: string | null
@@ -43,9 +49,16 @@ export function CharacterCard({
     .join('')
     .toLocaleUpperCase('es')
 
+  // El retrato vertical lo comparten `featured` y `house-member`.
+  const isPortrait = variant === 'featured' || variant === 'house-member'
+
   const card = (
     <article
-      className={variant === 'featured' ? 'character-card character-card--featured' : 'character-card'}
+      className={cx(
+        'character-card',
+        isPortrait && 'character-card--featured',
+        variant === 'house-member' && 'character-card--house-member',
+      )}
       data-house={houseTheme}
     >
       <div className="character-card__media">
@@ -63,7 +76,7 @@ export function CharacterCard({
             {initials}
           </span>
         )}
-        {variant === 'featured' && houseTheme && (
+        {isPortrait && houseTheme && (
           <HouseSigil className="character-card__corner-sigil" decorative house={houseTheme} size={32} />
         )}
         {status && (
@@ -75,10 +88,10 @@ export function CharacterCard({
         )}
       </div>
       <div className="min-w-0 flex-1 p-4 sm:p-5">
-        {house && houseTheme && variant !== 'featured' ? (
+        {house && houseTheme && !isPortrait ? (
           <HouseBadge house={houseTheme} label={house} />
         ) : house ? (
-          <p className={variant === 'featured' ? 'character-card__house-label' : 'font-sans text-[0.625rem] uppercase tracking-[0.16em] text-parchment'}>
+          <p className={isPortrait ? 'character-card__house-label' : 'font-sans text-[0.625rem] uppercase tracking-[0.16em] text-parchment'}>
             {house}
           </p>
         ) : null}

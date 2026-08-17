@@ -6,7 +6,9 @@ import { MobileNavigation } from './MobileNavigation'
 
 export function AppLayout() {
   const { pathname } = useLocation()
-  const isHome = pathname === '/'
+  // Pantallas que traen su propia composición a sangre (Hero a ancho completo,
+  // bandas de borde a borde y pie propio): el layout no les añade caja ni pie.
+  const isImmersive = pathname === '/' || /^\/casas\/[^/]+$/.test(pathname)
 
   return (
     <div className="flex min-h-screen flex-col bg-void text-bone">
@@ -20,13 +22,13 @@ export function AppLayout() {
       <AppHeader />
 
       <main
-        className={cx('archive-main flex-1', !isHome && 'py-8 sm:py-12 lg:py-16')}
+        className={cx('archive-main flex-1', !isImmersive && 'py-8 sm:py-12 lg:py-16')}
         id="contenido-principal"
       >
-        {isHome ? <Outlet /> : <Container><Outlet /></Container>}
+        {isImmersive ? <Outlet /> : <Container><Outlet /></Container>}
       </main>
 
-      <footer className={cx('hidden border-t border-etch bg-stone md:block', isHome && 'md:hidden')}>
+      <footer className={cx('hidden border-t border-etch bg-stone md:block', isImmersive && 'md:hidden')}>
         <Container className="flex items-center justify-between gap-8 py-8 font-sans text-xs text-parchment">
           <div>
             <p className="font-display font-semibold uppercase tracking-[0.08em] text-bone">
