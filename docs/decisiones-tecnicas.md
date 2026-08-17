@@ -139,10 +139,30 @@ Three.js en una fase posterior.
 
 ## ADR-016 — Configuración editorial de Home
 
-**Decisión:** mantener IDs estables, labels de respaldo y alias conocidos dentro de la
-feature de Home, consumiendo los datos remotos mediante los hooks y modelos normalizados
-existentes.
+**Decisión:** mantener IDs estables, labels de respaldo y términos conocidos en un
+catálogo editorial tipado e independiente de Home. La feature deriva de ese catálogo
+sus destacados y accesos rápidos.
 
 **Razón:** An API of Ice and Fire filtra listas por nombre y no cubre toda la capa
-editorial. La configuración permite accesos rápidos y degradación segura sin crear
-entidades duplicadas, alterar DTOs externos ni prometer una búsqueda global por títulos.
+editorial. El catálogo permite accesos rápidos, búsqueda por títulos/aliases y
+degradación segura sin crear entidades duplicadas ni alterar DTOs externos.
+
+## ADR-017 — Identidad canónica y procedencia explícita
+
+**Decisión:** identificar recursos como `ice-and-fire:<tipo>:<id-externo>` y conservar
+la procedencia en `SourceRef`. Las referencias entre entidades también usan IDs
+canónicos. Las rutas pueden usar el ID externo, obtenido siempre desde la referencia.
+
+**Razón:** un nombre no es identidad y la API contiene homónimos reales. Separar ID
+canónico, ID externo, URL y referencia editorial evita colisiones en cache, listas,
+rutas y futuras composiciones con una base propia.
+
+## ADR-018 — Localización y búsqueda deterministas
+
+**Decisión:** usar diccionarios, parsers acotados y fallback al original para español.
+La búsqueda crea documentos con texto original/localizado y aplica puntuación explícita
+a coincidencias exactas, prefijos y parciales. No se usa traducción automática runtime.
+
+**Razón:** los datos del universo requieren decisiones editoriales reproducibles. El
+modelo `LocalizedValue<T>` mantiene trazabilidad, y los documentos permiten búsqueda
+bilingüe sin mutar la entidad ni inventar duplicados locales.

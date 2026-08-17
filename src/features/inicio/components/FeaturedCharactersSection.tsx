@@ -50,7 +50,7 @@ export function FeaturedCharactersSection() {
 
         <div className="featured-characters-track">
           {FEATURED_CHARACTERS.map((character) => (
-            <FeaturedCharacterCard character={character} key={character.id} />
+            <FeaturedCharacterCard character={character} key={character.characterId} />
           ))}
         </div>
       </div>

@@ -9,7 +9,7 @@ function HousePieceLink({ house, size }: { house: GreatHouseConfig; size: 'compa
       aria-label={`Abrir la ficha de la casa ${house.name}`}
       className="great-house-link"
       data-house={house.theme}
-      to={`/casas/${house.id}`}
+      to={`/casas/${house.sourceId}`}
     >
       <HousePiece
         house={house.theme}
@@ -43,14 +43,14 @@ export function GreatHousesSection() {
         <div aria-hidden="true" className="great-houses-board__ember" />
         <div className="great-houses-board__back">
           {supportingHouses.map((house) => (
-            <div key={house.id} role="listitem">
+            <div key={house.canonicalId} role="listitem">
               <HousePieceLink house={house} size="compact" />
             </div>
           ))}
         </div>
         <div className="great-houses-board__front">
           {leadingHouses.map((house) => (
-            <div key={house.id} role="listitem">
+            <div key={house.canonicalId} role="listitem">
               <HousePieceLink house={house} size="standard" />
             </div>
           ))}
@@ -60,7 +60,7 @@ export function GreatHousesSection() {
 
       <div className="great-houses-mobile" role="list">
         {GREAT_HOUSES.map((house) => (
-          <div key={house.id} role="listitem">
+          <div key={house.canonicalId} role="listitem">
             <HousePieceLink house={house} size="compact" />
           </div>
         ))}

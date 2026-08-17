@@ -57,7 +57,7 @@ export function CasasPage() {
                 <Link
                   className="group flex min-h-40 h-full items-start gap-4 rounded-etched border border-etch bg-slab p-5 transition-[border-color,background-color,transform] hover:border-[var(--house-accent)] hover:bg-relief lg:hover:-translate-y-0.5"
                   data-house={theme}
-                  to={`/casas/${house.id}`}
+                  to={`/casas/${house.source.externalId}`}
                 >
                   <span className="grid size-12 flex-none place-items-center rounded-full border border-etch bg-stone text-gold">
                     {theme ? (

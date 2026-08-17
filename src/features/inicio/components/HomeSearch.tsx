@@ -4,20 +4,20 @@ import { Link } from 'react-router-dom'
 import { HouseSigil } from '../../../components/ui/HouseSigil'
 import { SearchField } from '../../../components/ui/SearchField'
 import { getHouseThemeFromName } from '../../../components/ui/house-theme'
-import {
-  QUICK_SEARCHES,
-  getFeaturedCharacterConfig,
-} from '../config/home-content'
+import type { CanonicalCharacterId } from '../../../lib/domain/canonical_entities'
+import { QUICK_SEARCHES } from '../config/home-content'
 import { useDebouncedValue } from '../hooks/use-debounced-value'
 import { useHomeSearch } from '../hooks/use-home-search'
 
 export function HomeSearch() {
   const [value, setValue] = useState('')
   const [submittedValue, setSubmittedValue] = useState('')
+  const [preferredCharacterId, setPreferredCharacterId] =
+    useState<CanonicalCharacterId>()
   const trimmedValue = value.trim()
   const debouncedValue = useDebouncedValue(trimmedValue, 350)
   const effectiveValue = submittedValue || (trimmedValue.length >= 2 ? debouncedValue : '')
-  const search = useHomeSearch(effectiveValue)
+  const search = useHomeSearch(effectiveValue, preferredCharacterId)
   const isWaitingForDebounce =
     trimmedValue.length >= 2 && !submittedValue && debouncedValue !== trimmedValue
   const showResults = search.enabled && !isWaitingForDebounce
@@ -26,15 +26,20 @@ export function HomeSearch() {
   function updateValue(nextValue: string) {
     setValue(nextValue)
     setSubmittedValue('')
+    setPreferredCharacterId(undefined)
   }
 
-  function submitValue(nextValue: string) {
+  function submitValue(
+    nextValue: string,
+    nextPreferredCharacterId?: CanonicalCharacterId,
+  ) {
     setValue(nextValue)
     setSubmittedValue(nextValue.trim())
+    setPreferredCharacterId(nextPreferredCharacterId)
   }
 
-  function searchQuickTerm(term: string) {
-    startTransition(() => submitValue(term))
+  function searchQuickTerm(term: string, characterId: CanonicalCharacterId) {
+    startTransition(() => submitValue(term, characterId))
   }
 
   function revealQuickTerm(event: FocusEvent<HTMLButtonElement>) {
@@ -47,7 +52,10 @@ export function HomeSearch() {
         autoComplete="off"
         label="Buscar personajes y casas"
         loading={isWaitingForDebounce || search.isFetching}
-        onClear={() => setSubmittedValue('')}
+        onClear={() => {
+          setSubmittedValue('')
+          setPreferredCharacterId(undefined)
+        }}
         onSubmit={submitValue}
         onValueChange={updateValue}
         placeholder="Busca un personaje, una casa, un título o un alias…"
@@ -65,7 +73,7 @@ export function HomeSearch() {
                 className="home-search__quick-button"
                 data-house={item.theme}
                 key={item.term}
-                onClick={() => searchQuickTerm(item.term)}
+                onClick={() => searchQuickTerm(item.term, item.characterId)}
                 onFocus={revealQuickTerm}
                 type="button"
               >
@@ -105,22 +113,22 @@ export function HomeSearch() {
                 <div>
                   <p className="home-search__result-heading">Personajes</p>
                   <ul className="mt-2 space-y-1">
-                    {search.characters.map((character) => {
-                      const featured = getFeaturedCharacterConfig(character.id)
-                      const name = character.name || character.aliases[0] || 'Sin nombre conocido'
+                    {search.characters.map((hit) => {
+                      const { character, view } = hit
+                      const summary = hit.disambiguation || view.summary
 
                       return (
                         <li key={character.id}>
-                          <Link className="home-search__result-link" to={`/personajes/${character.id}`}>
-                            {featured ? (
-                              <HouseSigil decorative house={featured.houseTheme} size={22} />
+                          <Link className="home-search__result-link" to={`/personajes/${character.source.externalId}`}>
+                            {view.houseTheme ? (
+                              <HouseSigil decorative house={view.houseTheme} size={22} />
                             ) : (
                               <UserRound aria-hidden="true" className="size-[1.375rem] text-ice" />
                             )}
                             <span className="min-w-0">
-                              <span className="block truncate font-display text-sm font-semibold text-bone">{name}</span>
+                              <span className="block truncate font-display text-sm font-semibold text-bone">{view.name}</span>
                               <span className="mt-0.5 block truncate font-serif text-sm italic text-parchment">
-                                {character.aliases[0] || character.culture || 'Personaje registrado'}
+                                {summary}
                               </span>
                             </span>
                           </Link>
@@ -140,7 +148,7 @@ export function HomeSearch() {
 
                       return (
                         <li key={house.id}>
-                          <Link className="home-search__result-link" data-house={theme} to={`/casas/${house.id}`}>
+                          <Link className="home-search__result-link" data-house={theme} to={`/casas/${house.source.externalId}`}>
                             {theme ? (
                               <HouseSigil decorative house={theme} size={22} />
                             ) : (

@@ -1,30 +1,40 @@
 import type { IceAndFireHouseResponse } from './api_types'
-import type { House } from './internal_types'
+import {
+  createCanonicalId,
+  type CanonicalHouse,
+} from '../../domain/canonical_entities'
 import {
   compactStrings,
   emptyToNull,
-  extractResourceId,
-  extractResourceIds,
+  extractCanonicalResourceId,
+  extractCanonicalResourceIds,
+  extractSourceRef,
 } from './normalizer_utils'
 
-export function normalizeHouse(house: IceAndFireHouseResponse): House {
+export function normalizeHouse(house: IceAndFireHouseResponse): CanonicalHouse {
+  const source = extractSourceRef(house.url, 'house')
+
+  if (!source) {
+    throw new TypeError(`La URL de fuente de la casa no es válida: ${house.url}`)
+  }
+
   return {
-    id: extractResourceId(house.url) ?? house.url,
-    sourceUrl: house.url,
+    id: createCanonicalId('house', source.externalId),
+    source,
     name: house.name.trim(),
     region: emptyToNull(house.region),
     coatOfArms: emptyToNull(house.coatOfArms),
     words: emptyToNull(house.words),
     titles: compactStrings(house.titles),
     seats: compactStrings(house.seats),
-    currentLordId: extractResourceId(house.currentLord),
-    heirId: extractResourceId(house.heir),
-    overlordId: extractResourceId(house.overlord),
+    currentLordId: extractCanonicalResourceId(house.currentLord, 'character'),
+    heirId: extractCanonicalResourceId(house.heir, 'character'),
+    overlordId: extractCanonicalResourceId(house.overlord, 'house'),
     founded: emptyToNull(house.founded),
-    founderId: extractResourceId(house.founder),
+    founderId: extractCanonicalResourceId(house.founder, 'character'),
     diedOut: emptyToNull(house.diedOut),
     ancestralWeapons: compactStrings(house.ancestralWeapons),
-    cadetBranchIds: extractResourceIds(house.cadetBranches),
-    swornMemberIds: extractResourceIds(house.swornMembers),
+    cadetBranchIds: extractCanonicalResourceIds(house.cadetBranches, 'house'),
+    swornMemberIds: extractCanonicalResourceIds(house.swornMembers, 'character'),
   }
 }

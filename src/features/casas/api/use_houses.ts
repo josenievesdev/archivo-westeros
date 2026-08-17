@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import {
+  createCanonicalId,
   getHouse,
   getHouses,
+  normalizeIceAndFireExternalId,
   type ResourceListParams,
 } from '../../../lib/api/ice-and-fire'
 
@@ -21,15 +23,21 @@ export function useHouses(
 }
 
 export function useHouse(id: string | undefined) {
+  const sourceId = normalizeIceAndFireExternalId(id)
+
   return useQuery({
-    queryKey: ['houses', 'detail', id],
+    queryKey: [
+      'houses',
+      'detail',
+      sourceId ? createCanonicalId('house', sourceId) : null,
+    ],
     queryFn: ({ signal }) => {
-      if (!id) {
+      if (!sourceId) {
         throw new Error('Se necesita un identificador de casa.')
       }
 
-      return getHouse(id, signal)
+      return getHouse(sourceId, signal)
     },
-    enabled: Boolean(id),
+    enabled: Boolean(sourceId),
   })
 }

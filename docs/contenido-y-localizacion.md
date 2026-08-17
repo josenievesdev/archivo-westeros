@@ -34,8 +34,44 @@ toda la interfaz y registrarse en el glosario cuando genere dudas.
 
 Los valores devueltos por An API of Ice and Fire no se traducen en el normalizador.
 Normalizar significa limpiar vacíos, separar referencias y adaptar tipos, no alterar
-el significado editorial. Una futura capa de contenido podrá ofrecer traducciones
-curadas sin perder el valor original.
+el significado editorial. La capa de contenido ofrece traducciones curadas sin perder
+el valor original.
+
+`LocalizedValue<T>` registra cuatro datos: `original`, `value`, locale `es` y método
+`dictionary`, `pattern` u `original`. Los modelos canónicos conservan siempre el texto
+normalizado de la fuente; los componentes consumen una proyección de UI.
+
+## Cobertura inicial
+
+`src/content/character_localization.ts` contiene la primera cobertura determinista:
+
+- Culturas frecuentes, como `Northmen` → `Norteños`.
+- Títulos y aliases curados, como `Mother of Dragons` → `Madre de Dragones`.
+- Temporadas con el patrón `Season N` → `Temporada N`.
+- Fechas conocidas de la API, como `In 284 AC, at Dragonstone` →
+  `En 284 d. C., en Dragonstone`.
+
+En este contexto `d. C.` significa “después de la Conquista”. Los lugares y nombres
+propios dentro de una frase se conservan. Un patrón desconocido vuelve al texto
+original completo; no se traducen fragmentos por intuición.
+
+La cobertura inicial se aplica a cultura, aliases, títulos y nacimiento en la ficha
+básica de personaje. Actor y nombres propios permanecen sin cambios.
+
+## Búsqueda bilingüe
+
+El catálogo editorial registra términos de búsqueda en español e inglés vinculados a
+un ID canónico. La normalización de consulta ignora mayúsculas, espacios repetidos,
+signos y tildes, pero el texto visible conserva su ortografía.
+
+Los términos editoriales solo ayudan a localizar una entidad remota. Nunca se
+renderizan como un personaje independiente. Los homónimos se conservan y se ordenan
+por coincidencia y prioridad editorial.
+
+Los nombres no catalogados se consultan con la capitalización exacta que requiere la
+fuente, tolerando la entrada del usuario en mayúsculas, minúsculas o sin tildes. La
+búsqueda parcial por alias/título está limitada al catálogo curado hasta disponer de
+un índice sincronizado del archivo completo.
 
 ## Reglas de redacción
 
@@ -64,7 +100,7 @@ mostrar trazas ni términos internos de la API.
 
 ## Glosario futuro
 
-`src/content/glossary/` contendrá decisiones terminológicas que afecten a la UI. Cada
+`src/content/glossary/` podrá contener decisiones terminológicas que afecten a la UI. Cada
 entrada debería registrar forma preferida, variantes admitidas, contexto y fuente.
 No se añadirá un sistema de internacionalización hasta que exista un segundo idioma o
 una necesidad real de gestionar catálogos de mensajes.

@@ -1,5 +1,9 @@
 import { CharacterCard } from '../../../components/ui/CharacterCard'
 import { Skeleton } from '../../../components/ui/Feedback'
+import {
+  createCharacterViewModel,
+  localizeCharacterTitle,
+} from '../../../content/character_localization'
 import { useCharacter } from '../../personajes/api/use_characters'
 import type { FeaturedCharacterConfig } from '../config/home-content'
 
@@ -8,32 +12,29 @@ interface FeaturedCharacterCardProps {
 }
 
 export function FeaturedCharacterCard({ character }: FeaturedCharacterCardProps) {
-  const query = useCharacter(character.id)
+  const query = useCharacter(character.source.externalId)
 
   if (query.isPending) {
     return (
-      <div aria-label={`Cargando ${character.fallbackName}`} className="featured-character-skeleton" role="status">
+      <div aria-label={`Cargando ${character.preferredName}`} className="featured-character-skeleton" role="status">
         <Skeleton className="h-full" />
       </div>
     )
   }
 
-  const data = query.data
-  const name = data?.name || character.fallbackName
-  const labels = data ? [...data.titles, ...data.aliases] : []
-  const verifiedLabel = labels.find(
-    (label) => label.toLocaleLowerCase('en') === character.fallbackTitle.toLocaleLowerCase('en'),
-  )
-  const title = verifiedLabel || character.fallbackTitle
+  const view = query.data ? createCharacterViewModel(query.data) : null
+  const name = view?.name || character.preferredName
+  const title =
+    view?.featuredTitle?.value || localizeCharacterTitle(character.featured.title).value
 
   return (
     <CharacterCard
       alias={title}
-      house={character.houseLabel}
-      houseTheme={character.houseTheme}
+      house={character.featured.houseLabel}
+      houseTheme={character.featured.houseTheme}
       name={name}
       status={{ label: 'Archivo', state: 'unknown' }}
-      to={`/personajes/${character.id}`}
+      to={`/personajes/${character.source.externalId}`}
       variant="featured"
     />
   )

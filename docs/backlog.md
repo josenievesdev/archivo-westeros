@@ -82,11 +82,13 @@ no representa prioridad ni compromiso de entrega.
 - Registrar procedencia, licencia y fecha de actualización.
 - Crear scripts idempotentes de sincronización.
 - Evaluar PostgreSQL y Supabase con un caso de uso real.
+- Migrar el catálogo editorial tipado sin cambiar IDs canónicos ni contratos de UI.
+- Ampliar metadata, traducciones y documentos de búsqueda más allá del conjunto curado.
 - Definir caché, invalidación y funcionamiento degradado.
 
 ## UX
 
-- Diseñar búsqueda global con teclado y tolerancia a alias.
+- Extender la búsqueda con teclado y aliases al archivo completo, no solo al catálogo curado.
 - Probar tareas de reconocimiento durante un episodio.
 - Definir navegación móvil y retorno rápido al contexto previo.
 - Crear estados de carga, vacío, error y datos parciales.

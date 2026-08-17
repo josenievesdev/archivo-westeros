@@ -2,6 +2,7 @@ import { UserRoundX, WifiOff } from 'lucide-react'
 import { CharacterCard } from '../../../components/ui/CharacterCard'
 import { EmptyState, Skeleton } from '../../../components/ui/Feedback'
 import { SectionTitle } from '../../../components/ui/SectionTitle'
+import { createCharacterViewModel } from '../../../content/character_localization'
 import { useCharacters } from '../api/use_characters'
 
 export function PersonajesPage() {
@@ -51,17 +52,16 @@ export function PersonajesPage() {
       {characters.data && characters.data.length > 0 && (
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {characters.data.map((character) => {
-            const displayName =
-              character.name || character.aliases[0] || 'Sin nombre conocido'
+            const view = createCharacterViewModel(character)
 
             return (
               <li key={character.id}>
                 <CharacterCard
-                  actor={character.playedBy[0]}
-                  alias={character.aliases[0]}
-                  description={character.culture || 'Cultura no indicada'}
-                  name={displayName}
-                  to={`/personajes/${character.id}`}
+                  actor={view.playedBy[0]}
+                  alias={view.aliases[0]?.value}
+                  description={view.culture?.value || 'Cultura no indicada'}
+                  name={view.name}
+                  to={`/personajes/${character.source.externalId}`}
                 />
               </li>
             )

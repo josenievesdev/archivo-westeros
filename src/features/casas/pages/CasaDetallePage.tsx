@@ -5,13 +5,15 @@ import { HouseSigil } from '../../../components/ui/HouseSigil'
 import { SectionTitle } from '../../../components/ui/SectionTitle'
 import { Surface } from '../../../components/ui/Surface'
 import { getHouseThemeFromName } from '../../../components/ui/house-theme'
+import { normalizeIceAndFireExternalId } from '../../../lib/domain/canonical_entities'
 import { useHouse } from '../api/use_houses'
 
 export function CasaDetallePage() {
   const { id } = useParams()
-  const house = useHouse(id)
+  const sourceId = normalizeIceAndFireExternalId(id)
+  const house = useHouse(sourceId ?? undefined)
 
-  if (!id) {
+  if (!sourceId) {
     return (
       <EmptyState
         description="La URL no contiene un identificador que podamos consultar."

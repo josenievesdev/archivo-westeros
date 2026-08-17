@@ -1,152 +1,111 @@
 import type { HouseTheme } from '../../../components/ui/house-theme'
+import {
+  FEATURED_CHARACTER_METADATA,
+  type FeaturedCharacterEditorialMetadata,
+} from '../../../content/character_editorial_metadata'
+import {
+  createCanonicalId,
+  type CanonicalHouseId,
+} from '../../../lib/domain/canonical_entities'
+import { normalizeSearchText } from '../../../services/character_search'
 
 export interface GreatHouseConfig {
   apiName: string
-  id: string
+  canonicalId: CanonicalHouseId
   motto: string
   name: string
   region: string
   searchAliases: string[]
+  sourceId: string
   theme: HouseTheme
 }
 
-export interface FeaturedCharacterConfig {
-  fallbackName: string
-  fallbackTitle: string
-  houseLabel: string
-  houseTheme: HouseTheme
-  id: string
-  searchAliases: string[]
-}
+export type FeaturedCharacterConfig = FeaturedCharacterEditorialMetadata
 
 export const GREAT_HOUSES: GreatHouseConfig[] = [
   {
     apiName: 'House Stark of Winterfell',
-    id: '362',
+    canonicalId: createCanonicalId('house', '362'),
     motto: 'Winter is Coming',
     name: 'Stark',
     region: 'The North · Winterfell',
-    searchAliases: ['stark', 'winterfell', 'the north'],
+    searchAliases: ['stark', 'winterfell', 'the north', 'el norte'],
+    sourceId: '362',
     theme: 'stark',
   },
   {
     apiName: 'House Lannister of Casterly Rock',
-    id: '229',
+    canonicalId: createCanonicalId('house', '229'),
     motto: 'Hear Me Roar!',
     name: 'Lannister',
     region: 'The Westerlands · Casterly Rock',
-    searchAliases: ['lannister', 'casterly rock', 'the westerlands'],
+    searchAliases: ['lannister', 'casterly rock', 'the westerlands', 'el occidente'],
+    sourceId: '229',
     theme: 'lannister',
   },
   {
     apiName: "House Targaryen of King's Landing",
-    id: '378',
+    canonicalId: createCanonicalId('house', '378'),
     motto: 'Fire and Blood',
     name: 'Targaryen',
     region: "The Crownlands · King's Landing",
-    searchAliases: ['targaryen', 'dragonstone', 'fire and blood'],
+    searchAliases: ['targaryen', 'dragonstone', 'fire and blood', 'fuego y sangre'],
+    sourceId: '378',
     theme: 'targaryen',
   },
   {
     apiName: "House Baratheon of Storm's End",
-    id: '17',
+    canonicalId: createCanonicalId('house', '17'),
     motto: 'Ours is the Fury',
     name: 'Baratheon',
     region: "The Stormlands · Storm's End",
-    searchAliases: ['baratheon', "storm's end", 'the stormlands'],
+    searchAliases: ['baratheon', "storm's end", 'the stormlands', 'tierras de la tormenta'],
+    sourceId: '17',
     theme: 'baratheon',
   },
   {
     apiName: 'House Greyjoy of Pyke',
-    id: '169',
+    canonicalId: createCanonicalId('house', '169'),
     motto: 'We Do Not Sow',
     name: 'Greyjoy',
     region: 'Iron Islands · Pyke',
-    searchAliases: ['greyjoy', 'pyke', 'iron islands'],
+    searchAliases: ['greyjoy', 'pyke', 'iron islands', 'islas del hierro'],
+    sourceId: '169',
     theme: 'greyjoy',
   },
   {
     apiName: 'House Tyrell of Highgarden',
-    id: '398',
+    canonicalId: createCanonicalId('house', '398'),
     motto: 'Growing Strong',
     name: 'Tyrell',
     region: 'The Reach · Highgarden',
-    searchAliases: ['tyrell', 'highgarden', 'the reach'],
+    searchAliases: ['tyrell', 'highgarden', 'the reach', 'el dominio'],
+    sourceId: '398',
     theme: 'tyrell',
   },
   {
     apiName: 'House Nymeros Martell of Sunspear',
-    id: '285',
+    canonicalId: createCanonicalId('house', '285'),
     motto: 'Unbowed, Unbent, Unbroken',
     name: 'Martell',
     region: 'Dorne · Sunspear',
     searchAliases: ['martell', 'nymeros martell', 'sunspear', 'dorne'],
+    sourceId: '285',
     theme: 'martell',
   },
 ]
 
-export const FEATURED_CHARACTERS: FeaturedCharacterConfig[] = [
-  {
-    fallbackName: 'Jon Snow',
-    fallbackTitle: "Lord Commander of the Night's Watch",
-    houseLabel: 'House Stark',
-    houseTheme: 'stark',
-    id: '583',
-    searchAliases: ['jon', 'lord snow', 'lord crow', 'the bastard of winterfell'],
-  },
-  {
-    fallbackName: 'Daenerys Targaryen',
-    fallbackTitle: 'Mother of Dragons',
-    houseLabel: 'House Targaryen',
-    houseTheme: 'targaryen',
-    id: '1303',
-    searchAliases: ['daenerys', 'dany', 'mother of dragons', 'dragon queen'],
-  },
-  {
-    fallbackName: 'Tyrion Lannister',
-    fallbackTitle: 'The Imp',
-    houseLabel: 'House Lannister',
-    houseTheme: 'lannister',
-    id: '1052',
-    searchAliases: ['tyrion', 'the imp', 'halfman'],
-  },
-  {
-    fallbackName: 'Arya Stark',
-    fallbackTitle: 'Arya Underfoot',
-    houseLabel: 'House Stark',
-    houseTheme: 'stark',
-    id: '148',
-    searchAliases: ['arya', 'arry', 'arya underfoot'],
-  },
-  {
-    fallbackName: 'Cersei Lannister',
-    fallbackTitle: 'Queen Regent',
-    houseLabel: 'House Lannister',
-    houseTheme: 'lannister',
-    id: '238',
-    searchAliases: ['cersei', 'queen regent', 'light of the west'],
-  },
-]
+export const FEATURED_CHARACTERS = FEATURED_CHARACTER_METADATA
 
 export const QUICK_SEARCHES = FEATURED_CHARACTERS.map((character) => ({
-  label: character.fallbackName,
-  term: character.fallbackName,
-  theme: character.houseTheme,
+  characterId: character.characterId,
+  label: character.preferredName,
+  term: character.preferredName,
+  theme: character.featured.houseTheme,
 }))
 
 function normalizeSearchTerm(value: string) {
-  return value.trim().toLocaleLowerCase('en')
-}
-
-export function resolveCharacterSearchTerm(value: string) {
-  const normalized = normalizeSearchTerm(value)
-  const matches = FEATURED_CHARACTERS.filter((character) =>
-    [character.fallbackName, character.fallbackTitle, ...character.searchAliases].some((candidate) =>
-      normalizeSearchTerm(candidate).includes(normalized),
-    ),
-  )
-
-  return matches.length === 1 ? matches[0].fallbackName : value.trim()
+  return normalizeSearchText(value)
 }
 
 export function resolveHouseSearchTerm(value: string) {
@@ -158,8 +117,4 @@ export function resolveHouseSearchTerm(value: string) {
   )
 
   return matches.length === 1 ? matches[0].apiName : value.trim()
-}
-
-export function getFeaturedCharacterConfig(id: string) {
-  return FEATURED_CHARACTERS.find((character) => character.id === id)
 }

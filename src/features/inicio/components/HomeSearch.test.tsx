@@ -4,27 +4,14 @@ import userEvent from '@testing-library/user-event'
 import type { PropsWithChildren } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { expect, test, vi } from 'vitest'
-import { resolveCharacterSearchTerm } from '../config/home-content'
+import {
+  createCharacterResponse,
+  DAENERYS_HISTORICAL_RESPONSE,
+  DAENERYS_MAIN_RESPONSE,
+  JON_SNOW_RESPONSE,
+} from '../../../test/fixtures/ice_and_fire_characters'
+import { createCharacterSearchPlan } from '../../../services/character_search'
 import { HomeSearch } from './HomeSearch'
-
-const jonSnowResponse = {
-  url: 'https://anapioficeandfire.com/api/characters/583',
-  name: 'Jon Snow',
-  gender: 'Male',
-  culture: 'Northmen',
-  born: 'In 283 AC',
-  died: '',
-  titles: ["Lord Commander of the Night's Watch"],
-  aliases: ['Lord Snow'],
-  father: '',
-  mother: '',
-  spouse: '',
-  allegiances: ['https://anapioficeandfire.com/api/houses/362'],
-  books: [],
-  povBooks: [],
-  tvSeries: ['Season 1'],
-  playedBy: ['Kit Harington'],
-}
 
 function apiResponse(payload: unknown) {
   return {
@@ -34,10 +21,14 @@ function apiResponse(payload: unknown) {
   } as Response
 }
 
-function SearchProviders({ children }: PropsWithChildren) {
-  const queryClient = new QueryClient({
+function createSearchQueryClient() {
+  return new QueryClient({
     defaultOptions: { queries: { retry: false, staleTime: 0 } },
   })
+}
+
+function SearchProviders({ children }: PropsWithChildren) {
+  const queryClient = createSearchQueryClient()
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -52,7 +43,7 @@ test('resuelve un alias, muestra el personaje y permite limpiar', async () => {
     const url = new URL(String(input))
     const isJonSearch =
       url.pathname.endsWith('/characters') && url.searchParams.get('name') === 'Jon Snow'
-    return apiResponse(isJonSearch ? [jonSnowResponse] : [])
+    return apiResponse(isJonSearch ? [JON_SNOW_RESPONSE] : [])
   })
   vi.stubGlobal('fetch', fetchMock)
   render(<HomeSearch />, { wrapper: SearchProviders })
@@ -76,7 +67,151 @@ test('resuelve un alias, muestra el personaje y permite limpiar', async () => {
 })
 
 test('resuelve los títulos editoriales a nombres consultables', () => {
-  expect(resolveCharacterSearchTerm("Lord Commander of the Night's Watch")).toBe('Jon Snow')
+  expect(
+    createCharacterSearchPlan("Lord Commander of the Night's Watch").requestNames,
+  ).toEqual(['Jon Snow'])
+})
+
+test('el acceso rápido de Daenerys conserva ambos homónimos y prioriza 1303', async () => {
+  const user = userEvent.setup()
+  const queryClient = createSearchQueryClient()
+  const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+    const url = new URL(String(input))
+    const isDaenerysSearch =
+      url.pathname.endsWith('/characters') &&
+      url.searchParams.get('name') === 'Daenerys Targaryen'
+
+    return apiResponse(
+      isDaenerysSearch
+        ? [DAENERYS_HISTORICAL_RESPONSE, DAENERYS_MAIN_RESPONSE]
+        : [],
+    )
+  })
+  vi.stubGlobal('fetch', fetchMock)
+  render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>
+        <HomeSearch />
+      </MemoryRouter>
+    </QueryClientProvider>,
+  )
+
+  await user.click(screen.getByRole('button', { name: 'Daenerys Targaryen' }))
+
+  const results = await screen.findByRole('region', {
+    name: 'Resultados para Daenerys Targaryen',
+  })
+  const links = within(results).getAllByRole('link', {
+    name: /Daenerys Targaryen/,
+  })
+  expect(links).toHaveLength(2)
+  expect(links[0]).toHaveAttribute('href', '/personajes/1303')
+  expect(links[1]).toHaveAttribute('href', '/personajes/271')
+  expect(within(links[0]).getByText('Emilia Clarke · En 284 d. C., en Dragonstone')).toBeInTheDocument()
+  expect(within(links[1]).getByText('En 172 d. C. · Princesa')).toBeInTheDocument()
+
+  const characterRequests = fetchMock.mock.calls.filter(([request]) =>
+    new URL(String(request)).pathname.endsWith('/characters'),
+  )
+  expect(characterRequests).toHaveLength(1)
+  expect(
+    queryClient.getQueryData([
+      'characters',
+      'detail',
+      'ice-and-fire:character:271',
+    ]),
+  ).toMatchObject({
+    id: 'ice-and-fire:character:271',
+    source: { externalId: '271' },
+  })
+})
+
+test('conserva resultados parciales cuando falla uno de varios nombres candidatos', async () => {
+  const user = userEvent.setup()
+  const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+    const url = new URL(String(input))
+
+    if (
+      url.pathname.endsWith('/characters') &&
+      url.searchParams.get('name') === 'Cersei Lannister'
+    ) {
+      return {
+        json: async () => ({}),
+        ok: false,
+        status: 503,
+      } as Response
+    }
+
+    const isDaenerysSearch =
+      url.pathname.endsWith('/characters') &&
+      url.searchParams.get('name') === 'Daenerys Targaryen'
+
+    return apiResponse(isDaenerysSearch ? [DAENERYS_MAIN_RESPONSE] : [])
+  })
+  vi.stubGlobal('fetch', fetchMock)
+  render(<HomeSearch />, { wrapper: SearchProviders })
+
+  await user.type(
+    screen.getByRole('searchbox', { name: 'Buscar personajes y casas' }),
+    'queen{Enter}',
+  )
+
+  const results = await screen.findByRole('region', { name: 'Resultados para queen' })
+  expect(await within(results).findByText('Daenerys Targaryen')).toBeInTheDocument()
+  expect(within(results).queryByRole('alert')).not.toBeInTheDocument()
+
+  const characterRequests = fetchMock.mock.calls.filter(([request]) =>
+    new URL(String(request)).pathname.endsWith('/characters'),
+  )
+  expect(characterRequests).toHaveLength(3)
+  expect(
+    characterRequests.filter(
+      ([request]) =>
+        new URL(String(request)).searchParams.get('name') === 'Cersei Lannister',
+    ),
+  ).toHaveLength(2)
+  expect(
+    characterRequests.filter(
+      ([request]) =>
+        new URL(String(request)).searchParams.get('name') === 'Daenerys Targaryen',
+    ),
+  ).toHaveLength(1)
+})
+
+test('normaliza el nombre no catalogado antes de consultar la API', async () => {
+  const user = userEvent.setup()
+  const aegonResponse = createCharacterResponse({
+    url: 'https://anapioficeandfire.com/api/characters/12',
+    name: 'Aegon Targaryen',
+    born: 'In 135 AC',
+    titles: ['King'],
+  })
+  const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+    const url = new URL(String(input))
+    const isAegonSearch =
+      url.pathname.endsWith('/characters') &&
+      url.searchParams.get('name') === 'Aegon Targaryen'
+
+    return apiResponse(isAegonSearch ? [aegonResponse] : [])
+  })
+  vi.stubGlobal('fetch', fetchMock)
+  render(<HomeSearch />, { wrapper: SearchProviders })
+
+  await user.type(
+    screen.getByRole('searchbox', { name: 'Buscar personajes y casas' }),
+    'AEGÓN TARGARYEN{Enter}',
+  )
+
+  const results = await screen.findByRole('region', {
+    name: 'Resultados para AEGÓN TARGARYEN',
+  })
+  expect(await within(results).findByText('Aegon Targaryen')).toBeInTheDocument()
+  expect(
+    fetchMock.mock.calls.some(
+      ([request]) =>
+        new URL(String(request)).searchParams.get('name') === 'Aegon Targaryen',
+    ),
+  ).toBe(true)
 })
 
 test('comunica loading y estado sin resultados', async () => {

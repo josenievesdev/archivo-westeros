@@ -2,12 +2,13 @@ import { apiGet } from './api_client'
 import { apiEndpoints } from './api_endpoints'
 import type { IceAndFireHouseResponse } from './api_types'
 import { normalizeHouse } from './house_normalizer'
-import type { House, ResourceListParams } from './internal_types'
+import type { CanonicalHouse } from '../../domain/canonical_entities'
+import type { ResourceListParams } from './internal_types'
 
 export async function getHouses(
   params: ResourceListParams = {},
   signal?: AbortSignal,
-): Promise<House[]> {
+): Promise<CanonicalHouse[]> {
   const response = await apiGet<IceAndFireHouseResponse[]>(
     apiEndpoints.houses,
     {
@@ -24,7 +25,7 @@ export async function getHouses(
 export async function getHouse(
   id: string,
   signal?: AbortSignal,
-): Promise<House> {
+): Promise<CanonicalHouse> {
   const response = await apiGet<IceAndFireHouseResponse>(
     apiEndpoints.house(id),
     {},

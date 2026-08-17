@@ -1,21 +1,15 @@
 import { useHouses } from '../../casas/api/use_houses'
-import { useCharacters } from '../../personajes/api/use_characters'
-import {
-  resolveCharacterSearchTerm,
-  resolveHouseSearchTerm,
-} from '../config/home-content'
+import type { CanonicalCharacterId } from '../../../lib/domain/canonical_entities'
+import { useCharacterSearch } from '../../personajes/api/use_characters'
+import { resolveHouseSearchTerm } from '../config/home-content'
 
-export function useHomeSearch(value: string) {
+export function useHomeSearch(
+  value: string,
+  preferredCharacterId?: CanonicalCharacterId,
+) {
   const term = value.trim()
   const enabled = term.length >= 2
-  const characters = useCharacters(
-    {
-      name: resolveCharacterSearchTerm(term),
-      page: 1,
-      pageSize: 8,
-    },
-    { enabled },
-  )
+  const characters = useCharacterSearch(term, { enabled, preferredCharacterId })
   const houses = useHouses(
     {
       name: resolveHouseSearchTerm(term),

@@ -1,18 +1,29 @@
 import type { IceAndFireCharacterResponse } from './api_types'
-import type { Character } from './internal_types'
+import {
+  createCanonicalId,
+  type CanonicalCharacter,
+} from '../../domain/canonical_entities'
 import {
   compactStrings,
   emptyToNull,
-  extractResourceId,
-  extractResourceIds,
+  extractCanonicalResourceId,
+  extractCanonicalResourceIds,
+  extractSourceRef,
 } from './normalizer_utils'
 
 export function normalizeCharacter(
   character: IceAndFireCharacterResponse,
-): Character {
+): CanonicalCharacter {
+  const source = extractSourceRef(character.url, 'character')
+
+  if (!source) {
+    throw new TypeError(`La URL de fuente del personaje no es válida: ${character.url}`)
+  }
+
   return {
-    id: extractResourceId(character.url) ?? character.url,
-    sourceUrl: character.url,
+    id: createCanonicalId('character', source.externalId),
+    source,
+    editorial: null,
     name: emptyToNull(character.name),
     gender: emptyToNull(character.gender),
     culture: emptyToNull(character.culture),
@@ -20,12 +31,12 @@ export function normalizeCharacter(
     died: emptyToNull(character.died),
     titles: compactStrings(character.titles),
     aliases: compactStrings(character.aliases),
-    fatherId: extractResourceId(character.father),
-    motherId: extractResourceId(character.mother),
-    spouseId: extractResourceId(character.spouse),
-    allegianceIds: extractResourceIds(character.allegiances),
-    bookIds: extractResourceIds(character.books),
-    povBookIds: extractResourceIds(character.povBooks),
+    fatherId: extractCanonicalResourceId(character.father, 'character'),
+    motherId: extractCanonicalResourceId(character.mother, 'character'),
+    spouseId: extractCanonicalResourceId(character.spouse, 'character'),
+    allegianceIds: extractCanonicalResourceIds(character.allegiances, 'house'),
+    bookIds: extractCanonicalResourceIds(character.books, 'book'),
+    povBookIds: extractCanonicalResourceIds(character.povBooks, 'book'),
     tvSeries: compactStrings(character.tvSeries),
     playedBy: compactStrings(character.playedBy),
   }
