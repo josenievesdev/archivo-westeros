@@ -72,7 +72,15 @@ export interface HouseHeraldryViewModel {
   description?: string
 }
 
+export interface HouseRelationViewModel {
+  id: string
+  name: string
+  to?: string
+}
+
 export interface HouseDetailViewModel {
+  /** Ramas cadete resueltas. No equivalen a casas juramentadas. */
+  cadetBranches?: HouseRelationViewModel[]
   /** Descripción larga bajo el lema. */
   description?: string
   /** Nombre completo para migas y rótulos, p. ej. `House Targaryen`. */
@@ -106,4 +114,8 @@ export interface HouseDetailViewModel {
   words?: string
   /** Última cabeza conocida de la casa. */
   currentHead?: string
+  currentLord?: HouseRelationViewModel
+  heir?: HouseRelationViewModel
+  founder?: HouseRelationViewModel
+  overlord?: HouseRelationViewModel
 }

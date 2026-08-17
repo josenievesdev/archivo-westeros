@@ -191,3 +191,15 @@ El archivo general continúa paginado. Las siete casas major pueden cargarse por
 detalles cacheados, mientras que búsqueda/orden global de las 444 casas queda pendiente
 de un snapshot completo o índice sincronizado. No se incorpora base de datos ni una
 descarga total automática en esta fase.
+
+La ruta `/casas/:id` consume `HouseDataBundle` mediante un hook de TanStack Query con
+clave propia y un límite de 4 `swornMembers`. El lector interno conserva la clave de
+detalle de la casa principal, por lo que comparte su cache y evita una segunda petición.
+La query del bundle no reintenta el grafo completo ante fallos secundarios.
+
+El mapper expone relaciones literales por separado: `currentLord` puede alimentar la
+cabeza actual, pero `founder` y `heir` no forman una cronología; `overlord` y
+`cadetBranches` tampoco se reinterpretan como casas juramentadas. Los miembros visibles
+proceden únicamente de `swornMembers` resueltos y no reciben estado, relevancia o títulos
+inventados. Esta proyección permite mantener la ficha existente sin trasladar
+ambigüedades visuales al dominio.

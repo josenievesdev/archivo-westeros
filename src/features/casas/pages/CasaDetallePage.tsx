@@ -3,8 +3,9 @@ import type { ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import { Container } from '../../../components/ui/Container'
 import { EmptyState, Skeleton } from '../../../components/ui/Feedback'
+import { IceAndFireApiError } from '../../../lib/api/ice-and-fire'
 import { normalizeIceAndFireExternalId } from '../../../lib/domain/canonical_entities'
-import { useHouse } from '../api/use_houses'
+import { useHouseDataBundle } from '../api/use_houses'
 import { HouseDetailView } from '../house-detail/HouseDetailView'
 import { toHouseDetailViewModel } from '../house-detail/house-detail.connection'
 
@@ -21,7 +22,7 @@ function TransientState({ children }: { children: ReactNode }) {
 export function CasaDetallePage() {
   const { id } = useParams()
   const sourceId = normalizeIceAndFireExternalId(id)
-  const house = useHouse(sourceId ?? undefined)
+  const houseBundle = useHouseDataBundle(sourceId ?? undefined)
 
   if (!sourceId) {
     return (
@@ -37,7 +38,7 @@ export function CasaDetallePage() {
     )
   }
 
-  if (house.isPending) {
+  if (houseBundle.isPending) {
     return (
       <TransientState>
         <div aria-label="Cargando casa" className="max-w-4xl space-y-6" role="status">
@@ -50,19 +51,27 @@ export function CasaDetallePage() {
     )
   }
 
-  if (house.isError) {
+  if (houseBundle.isError) {
+    const isNotFound =
+      houseBundle.error instanceof IceAndFireApiError &&
+      houseBundle.error.status === 404
+
     return (
       <TransientState>
         <EmptyState
-          description="La fuente externa no devolvió una ficha válida para esta ruta."
+          description={
+            isNotFound
+              ? 'No existe una casa de la fuente asociada a este identificador.'
+              : 'La fuente externa no devolvió una ficha válida para esta ruta.'
+          }
           headingAs="h1"
           icon={<ShieldX aria-hidden="true" className="size-5" />}
           role="alert"
-          title="No fue posible obtener esta casa"
+          title={isNotFound ? 'Casa no encontrada' : 'No fue posible obtener esta casa'}
         />
       </TransientState>
     )
   }
 
-  return <HouseDetailView house={toHouseDetailViewModel(house.data)} />
+  return <HouseDetailView house={toHouseDetailViewModel(houseBundle.data)} />
 }

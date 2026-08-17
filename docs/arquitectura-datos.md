@@ -208,6 +208,11 @@ programa nuevas referencias, pero una petición ya compartida puede terminar y p
 cache para otros consumidores. Después se apoya en claves de detalle compartidas con
 TanStack Query para reutilizar cache y solicitudes concurrentes sin abortarlas entre sí.
 
+La ficha `/casas/:id` solicita el bundle con un límite explícito de 4 `swornMembers`.
+Este límite pertenece a esa proyección de UI y no modifica el valor por defecto del
+servicio. El ViewModel conserva el conteo total reportado por la fuente aunque solo
+incluya los personajes resueltos dentro del límite.
+
 Estas relaciones no cambian de significado al presentarse:
 
 - `swornMembers` son personajes que la fuente enumera como juramentados; no son
@@ -233,10 +238,27 @@ servicio no React use `QueryClient.fetchQuery` con esas mismas claves. Así, det
 bundle y resolución comparten cache y deduplicación sin importar hooks ni un cliente
 global dentro del dominio. Los tests pueden inyectar lectores o loaders sin red.
 
+`useHouseDataBundle` asigna al bundle una clave distinta que incluye ID externo y límite
+de miembros, pero su primera lectura de la casa utiliza la clave canónica de detalle ya
+existente. Por ello, navegar a la ficha no descarga la entidad principal dos veces y
+una casa previamente cacheada se reutiliza. Las relaciones resueltas también quedan en
+sus claves de detalle. La query exterior no reintenta el bundle completo: un fallo
+secundario se conserva en `relationFailures`, mientras que un fallo de la casa principal
+mantiene los estados de error o recurso inexistente de la ruta.
+
 ### Features y UI
 
 Las features deciden cómo presentar y relacionar modelos internos. Los componentes
 compartidos no realizan llamadas de red ni interpretan URLs de la fuente.
+
+La conexión de la ficha de casa recibe exclusivamente `HouseDataBundle`. Proyecta
+`currentLord` como cabeza actual, expone `heir`, `founder`, `overlord` y
+`cadetBranches` como relaciones con su significado original, y muestra hasta cuatro
+`swornMembers` sin añadir estado, relevancia ni títulos editoriales. No llena la
+cronología de mando con `founder` o `currentLord`, ni convierte `overlord` o
+`cadetBranches` en casas juramentadas. Hasta que existan fuentes apropiadas, ambos
+paneles permanecen en su estado vacío. El rótulo visual heredado para miembros no
+cambia el origen ni la semántica de los personajes proyectados.
 
 ## Fuente actual
 
