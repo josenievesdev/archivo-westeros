@@ -70,6 +70,10 @@ La normalización es una transformación determinista y se prueba sin red.
   canónicas.
 - `CharacterEditorialMetadata` relaciona una referencia editorial con una entidad,
   sin crear otro personaje.
+- `MajorHouseMetadata` identifica las siete casas priorizadas sin duplicar sus
+  entidades remotas.
+- `HouseArchiveEntry`, `HouseSearchDocument` y `HouseDataBundle` separan archivo,
+  búsqueda y relaciones resueltas de cualquier representación visual.
 - `LocalizedValue<T>` conserva a la vez el valor de fuente y el valor visible.
 - `CharacterViewModel`, `CharacterSearchDocument` y `CharacterSearchHit` separan la
   entidad persistible de las necesidades de presentación y búsqueda.
@@ -100,6 +104,10 @@ Las rutas públicas mantienen por ahora el ID externo (`/personajes/1303`) porqu
 segmento que acepta la API. Componentes y hooks lo obtienen desde
 `entity.source.externalId`; no reinterpretan el ID canónico ni analizan URLs.
 
+Las relaciones canónicas sí necesitan volver al ID externo para consultar la fuente.
+Esa conversión se realiza únicamente mediante `parseCanonicalId`, que valida fuente,
+tipo de recurso e ID. Los servicios no separan cadenas canónicas manualmente.
+
 ## Composición editorial
 
 `src/content/character_editorial_metadata.ts` es el catálogo tipado actual. Cada
@@ -111,6 +119,24 @@ La composición se realiza después de normalizar. Devuelve una entidad nueva co
 metadata y deja intactos tanto el DTO como la entidad de fuente. Por ejemplo, la
 metadata de `ice-and-fire:character:1303` enriquece el personaje remoto `1303`; no
 crea una tercera Daenerys ni sustituye al registro histórico `271`.
+
+`src/content/house_editorial_metadata.ts` aplica el mismo principio a Stark,
+Lannister, Targaryen, Baratheon, Greyjoy, Tyrell y Martell. Cada entrada referencia una
+casa real mediante `source.externalId` y `canonicalId`, e incorpora únicamente orden,
+nombre corto, prioridad de búsqueda, estado destacado y `themeKey` semántico. No copia
+la casa ni sustituye nombre, región, lema o asientos procedentes de la API.
+
+Los IDs verificados son:
+
+| Casa | Source ID | ID canónico |
+| --- | --- | --- |
+| Stark | `362` | `ice-and-fire:house:362` |
+| Lannister | `229` | `ice-and-fire:house:229` |
+| Targaryen | `378` | `ice-and-fire:house:378` |
+| Baratheon | `17` | `ice-and-fire:house:17` |
+| Greyjoy | `169` | `ice-and-fire:house:169` |
+| Tyrell | `398` | `ice-and-fire:house:398` |
+| Martell | `285` | `ice-and-fire:house:285` |
 
 ## Localización y búsqueda
 
@@ -139,12 +165,73 @@ y conserva partículas, números romanos, compuestos y excepciones ortográficas
 conocidas. La API solo admite nombres completos fuera del catálogo curado; ampliar la
 búsqueda parcial a todo el archivo requerirá sincronizar un índice propio.
 
+### Archivo y búsqueda de casas
+
+`buildHouseArchiveEntries` proyecta casas ya cargadas a un modelo de archivo con ambas
+identidades, nombre, nombre corto editorial, región, lema, asientos y clasificación
+major/minor. `sortHouseArchiveEntries` y `sortHousesForArchive` sitúan primero las siete
+casas major en orden editorial y conservan después todas las casas menores en orden
+alfabético estable.
+
+La búsqueda local crea documentos con nombre completo, `shortName`, región, `words` y
+`seats`. Reutiliza la normalización de texto compartida y no traduce nombres propios.
+Solo busca sobre las entradas entregadas al servicio; no presenta una página remota
+parcial como si fueran las 444 casas del archivo.
+
+La estrategia actual evita descargar las nueve páginas máximas en cada navegación:
+
+- La metadata de las siete casas major está disponible sin red.
+- `loadMajorHouses` puede obtener esas siete entidades por detalle y reutiliza el
+  lector respaldado por TanStack Query.
+- El catálogo general continúa paginado mediante `getHouses({ page, pageSize })`.
+- Cada página cargada puede convertirse, ordenarse y buscarse localmente.
+- La búsqueda parcial global sobre las 444 casas requerirá acumular un snapshot
+  completo o sincronizar un índice propio; no se simula todavía.
+
+### Relaciones de casas
+
+`HouseDataBundle` compone una casa canónica con metadata y las relaciones literales de
+la API:
+
+- `currentLord`, `heir` y `founder` resuelven referencias a personajes.
+- `overlord` y `cadetBranches` resuelven referencias a casas.
+- `swornMembers` resuelve referencias a personajes con límite configurable.
+- `counts` conserva totales de fuente, elementos solicitados, resueltos y omitidos.
+- `relationFailures` registra fallos por relación sin descartar la casa principal ni
+  las referencias resueltas correctamente.
+
+El límite inicial de `swornMembers` es 6, con máximo explícito de 25. Las ramas cadete
+se limitan a 12 por defecto. La resolución deduplica IDs antes de solicitar, reconstruye
+el orden original, ejecuta 4 referencias por grupo de forma concurrente por defecto y
+acepta cancelación por consumidor. Un consumidor cancelado deja de esperar y no
+programa nuevas referencias, pero una petición ya compartida puede terminar y poblar
+cache para otros consumidores. Después se apoya en claves de detalle compartidas con
+TanStack Query para reutilizar cache y solicitudes concurrentes sin abortarlas entre sí.
+
+Estas relaciones no cambian de significado al presentarse:
+
+- `swornMembers` son personajes que la fuente enumera como juramentados; no son
+  “miembros relevantes” ni casas subordinadas.
+- `cadetBranches` son ramas de la casa; no son “casas juramentadas”.
+- `overlord` es una referencia singular de la fuente; una colección inversa de casas
+  vasallas solo puede derivarse de un catálogo completo y debe declarar su cobertura.
+- `currentLord` no representa historial de mando.
+
+El bundle no incluye copy, componentes, visibilidad por episodio ni `spoilerLevel`.
+Esas políticas podrán proyectarse después sin alterar la entidad o el resolver.
+
 ### TanStack Query
 
 Los hooks de cada feature coordinan caché, carga, error, reintentos y cancelación. La
 UI no repite `fetch` dentro de `useEffect`. Las claves distinguen listas, detalles y
 búsquedas; el detalle usa el ID canónico en la clave aunque la petición reciba el ID
 externo.
+
+Las claves de detalle de personajes y casas viven en
+`lib/query/ice_and_fire_query_keys.ts`. `createQueryClientEntityReader` permite que un
+servicio no React use `QueryClient.fetchQuery` con esas mismas claves. Así, detalle,
+bundle y resolución comparten cache y deduplicación sin importar hooks ni un cliente
+global dentro del dominio. Los tests pueden inyectar lectores o loaders sin red.
 
 ### Features y UI
 
@@ -212,6 +299,9 @@ La migración no debe cambiar IDs, rutas ni modelos consumidos por la UI.
 ## Caché y sincronización
 
 - TanStack Query proporciona caché en memoria durante esta fase.
+- El lector canónico recibe `QueryClient` por inyección; no crea una segunda cache.
+- Las relaciones exitosas se cachean como detalles independientes. Un fallo secundario
+  no se guarda como entidad válida ni invalida las demás.
 - Los scripts de `scripts/sync/` podrán importar o comprobar datos cuando exista una
   base propia.
 - La persistencia local o remota requerirá una política de actualización y procedencia.
@@ -220,6 +310,14 @@ La migración no debe cambiar IDs, rutas ni modelos consumidos por la UI.
 ## Errores y datos incompletos
 
 - Un campo vacío se representa como desconocido, no como una afirmación negativa.
+- Una referencia ausente (`null`) se diferencia de una referencia presente cuya
+  resolución falló; el segundo caso aparece en `relationFailures`.
+- Una URL de relación malformada todavía se descarta durante la normalización y no
+  llega al bundle. Por tanto, los conteos actuales describen referencias canónicas
+  válidas, no el número literal de cadenas del DTO. Registrar diagnósticos de
+  normalización queda pendiente.
+- Los límites se representan como conteos omitidos, no como si la fuente tuviera menos
+  relaciones.
 - Los errores HTTP se traducen a mensajes en español en la interfaz.
 - La indisponibilidad externa no debería bloquear en el futuro contenido ya almacenado.
 - Los normalizadores no corrigen hechos del universo ni completan huecos por intuición.
@@ -229,6 +327,8 @@ La migración no debe cambiar IDs, rutas ni modelos consumidos por la UI.
 - `lib/api` puede depender de `config` y de tipos propios de su integración.
 - `content` contiene datos editoriales y proyecciones deterministas, nunca transporte.
 - `services` combina entidades, contenido y reglas puras de búsqueda.
+- `lib/query` define identidad de cache; los adaptadores reciben `QueryClient` por
+  inyección y los servicios de dominio reciben un `CanonicalEntityReader`.
 - Las features pueden depender de modelos canónicos, servicios y funciones públicas de
   `lib/api`.
 - Los componentes no importan DTOs externos.

@@ -166,3 +166,28 @@ a coincidencias exactas, prefijos y parciales. No se usa traducción automática
 **Razón:** los datos del universo requieren decisiones editoriales reproducibles. El
 modelo `LocalizedValue<T>` mantiene trazabilidad, y los documentos permiten búsqueda
 bilingüe sin mutar la entidad ni inventar duplicados locales.
+
+## ADR-019 — Servicios de datos de casas
+
+**Decisión:** representar las siete casas principales mediante metadata enlazada por
+ID canónico y construir archivo, búsqueda y relaciones en servicios no React. Las
+relaciones se resuelven mediante un lector inyectable que puede apoyarse en las mismas
+claves de TanStack Query que los detalles. `HouseDataBundle` mantiene entidad,
+metadata, relaciones, conteos y fallos parciales separados de la presentación.
+
+**Razón:** la API entrega hasta cientos de referencias por casa y sus nombres tienen
+significados concretos. Deduplicar IDs, limitar `swornMembers` a 6 por defecto y tolerar
+fallos secundarios evita N+1 descontrolado sin ocultar cobertura. La concurrencia se
+acota a 4 referencias por grupo por defecto. La cancelación deja de esperar por
+consumidor sin abortar una petición deduplicada que otro consumidor comparte. La
+inyección permite cache real en producción y fixtures sin red en tests.
+
+`swornMembers` permanece como personajes juramentados según la fuente;
+`cadetBranches` permanece como ramas. Ninguno se renombra como miembros relevantes o
+casas juramentadas. No se deriva una relación inversa de vasallaje desde páginas
+incompletas.
+
+El archivo general continúa paginado. Las siete casas major pueden cargarse por sus
+detalles cacheados, mientras que búsqueda/orden global de las 444 casas queda pendiente
+de un snapshot completo o índice sincronizado. No se incorpora base de datos ni una
+descarga total automática en esta fase.

@@ -12,6 +12,12 @@ import type {
   CharacterSearchHit,
   CharacterSearchPlan,
 } from '../lib/domain/canonical_entities'
+import {
+  getSearchMatchQuality,
+  normalizeSearchText,
+} from '../lib/search/search_text'
+
+export { normalizeSearchText } from '../lib/search/search_text'
 
 const FIELD_MULTIPLIERS: Readonly<Record<CharacterSearchField, number>> = {
   actor: 8,
@@ -37,16 +43,6 @@ const CONTEXTUAL_NAME_PARTICLES = new Set(['mo', 'na', 'zo'])
 const ROMAN_NUMERALS = /^[ivxlcdm]+$/
 const API_NAME_OVERRIDES: Readonly<Record<string, string>> = {
   tomtoo: 'TomToo',
-}
-
-export function normalizeSearchText(value: string) {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLocaleLowerCase('es')
-    .replace(/['’]/g, '')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim()
 }
 
 export function createApiCharacterName(value: string) {
@@ -109,29 +105,6 @@ function uniqueStrings(values: readonly (string | null | undefined)[]) {
   })
 }
 
-function matchQuality(candidate: string, normalizedQuery: string) {
-  const normalizedCandidate = normalizeSearchText(candidate)
-
-  if (normalizedCandidate === normalizedQuery) {
-    return 100
-  }
-
-  if (normalizedCandidate.startsWith(normalizedQuery)) {
-    return 75
-  }
-
-  if (normalizedCandidate.includes(normalizedQuery)) {
-    return 45
-  }
-
-  const queryTokens = normalizedQuery.split(' ').filter(Boolean)
-  if (queryTokens.length > 1 && queryTokens.every((token) => normalizedCandidate.includes(token))) {
-    return 35
-  }
-
-  return 0
-}
-
 function getMetadataMatchScore(
   metadata: CharacterEditorialMetadata,
   normalizedQuery: string,
@@ -144,7 +117,12 @@ function getMetadataMatchScore(
     ...metadata.searchTerms.es,
   ].filter((value): value is string => Boolean(value))
 
-  return Math.max(...candidates.map((candidate) => matchQuality(candidate, normalizedQuery)), 0)
+  return Math.max(
+    ...candidates.map((candidate) =>
+      getSearchMatchQuality(candidate, normalizedQuery),
+    ),
+    0,
+  )
 }
 
 export function createCharacterSearchPlan(
@@ -265,7 +243,7 @@ function scoreDocument(document: CharacterSearchDocument, normalizedQuery: strin
 
   fieldValues.forEach(([field, values]) => {
     const quality = Math.max(
-      ...values.map((value) => matchQuality(value, normalizedQuery)),
+      ...values.map((value) => getSearchMatchQuality(value, normalizedQuery)),
       0,
     )
 

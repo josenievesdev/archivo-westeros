@@ -199,3 +199,21 @@ export function createSourceIdentity<Resource extends CanonicalResource>(
     externalId: normalizedId,
   }
 }
+
+export function parseCanonicalId<Resource extends CanonicalResource>(
+  canonicalId: string,
+  expectedResource: Resource,
+): SourceIdentity<Resource> | null {
+  const prefix = `${ICE_AND_FIRE_SOURCE}:${expectedResource}:`
+
+  if (!canonicalId.startsWith(prefix)) {
+    return null
+  }
+
+  const externalId = normalizeIceAndFireExternalId(canonicalId.slice(prefix.length))
+  if (!externalId || canonicalId !== `${prefix}${externalId}`) {
+    return null
+  }
+
+  return createSourceIdentity(expectedResource, externalId)
+}

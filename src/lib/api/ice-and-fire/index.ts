@@ -9,6 +9,7 @@ export {
   createSourceIdentity,
   ICE_AND_FIRE_SOURCE,
   normalizeIceAndFireExternalId,
+  parseCanonicalId,
 } from '../../domain/canonical_entities'
 export type {
   CanonicalBookId,
@@ -17,13 +18,25 @@ export type {
   CanonicalHouse,
   CanonicalHouseId,
   CanonicalId,
+  CanonicalResource,
   CharacterEditorialMetadata,
   CharacterSearchDocument,
   CharacterSearchHit,
   CharacterSearchPlan,
   CharacterViewModel,
   EditorialRef,
+  EditorialHouseKey,
   LocalizedValue,
   SourceIdentity,
   SourceRef,
 } from '../../domain/canonical_entities'
+export type {
+  HouseArchiveEntry,
+  HouseDataBundle,
+  HouseDataBundleCounts,
+  HouseRelationFailure,
+  HouseRelationName,
+  HouseSearchDocument,
+  HouseSearchField,
+  MajorHouseMetadata,
+} from '../../domain/house_types'

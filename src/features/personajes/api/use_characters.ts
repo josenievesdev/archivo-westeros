@@ -4,13 +4,13 @@ import {
   mergeCanonicalCharacters,
 } from '../../../content/character_editorial_metadata'
 import {
-  createCanonicalId,
   getCharacter,
   getCharacters,
   normalizeIceAndFireExternalId,
   type CanonicalCharacterId,
   type ResourceListParams,
 } from '../../../lib/api/ice-and-fire'
+import { characterDetailQueryKey } from '../../../lib/query/ice_and_fire_query_keys'
 import {
   createCharacterSearchPlan,
   rankCharacterSearchResults,
@@ -22,10 +22,6 @@ interface ResourceListQueryOptions {
 
 interface CharacterSearchQueryOptions extends ResourceListQueryOptions {
   preferredCharacterId?: CanonicalCharacterId
-}
-
-function characterDetailQueryKey(sourceId: string) {
-  return ['characters', 'detail', createCanonicalId('character', sourceId)] as const
 }
 
 async function getSearchCandidate(name: string, signal: AbortSignal) {
