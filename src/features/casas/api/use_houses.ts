@@ -5,10 +5,18 @@ import {
   type ResourceListParams,
 } from '../../../lib/api/ice-and-fire'
 
-export function useHouses(params: ResourceListParams = {}) {
+interface ResourceListQueryOptions {
+  enabled?: boolean
+}
+
+export function useHouses(
+  params: ResourceListParams = {},
+  options: ResourceListQueryOptions = {},
+) {
   return useQuery({
     queryKey: ['houses', 'list', params],
     queryFn: ({ signal }) => getHouses(params, signal),
+    enabled: options.enabled,
   })
 }
 

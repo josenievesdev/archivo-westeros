@@ -1,9 +1,13 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { Container } from '../../components/ui/Container'
+import { cx } from '../../lib/utils/cx'
 import { AppHeader } from './AppHeader'
 import { MobileNavigation } from './MobileNavigation'
 
 export function AppLayout() {
+  const { pathname } = useLocation()
+  const isHome = pathname === '/'
+
   return (
     <div className="flex min-h-screen flex-col bg-void text-bone">
       <a
@@ -15,13 +19,14 @@ export function AppLayout() {
 
       <AppHeader />
 
-      <main className="archive-main flex-1 py-8 sm:py-12 lg:py-16" id="contenido-principal">
-        <Container>
-          <Outlet />
-        </Container>
+      <main
+        className={cx('archive-main flex-1', !isHome && 'py-8 sm:py-12 lg:py-16')}
+        id="contenido-principal"
+      >
+        {isHome ? <Outlet /> : <Container><Outlet /></Container>}
       </main>
 
-      <footer className="hidden border-t border-etch bg-stone md:block">
+      <footer className={cx('hidden border-t border-etch bg-stone md:block', isHome && 'md:hidden')}>
         <Container className="flex items-center justify-between gap-8 py-8 font-sans text-xs text-parchment">
           <div>
             <p className="font-display font-semibold uppercase tracking-[0.08em] text-bone">

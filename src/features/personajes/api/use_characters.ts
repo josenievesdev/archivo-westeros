@@ -5,10 +5,18 @@ import {
   type ResourceListParams,
 } from '../../../lib/api/ice-and-fire'
 
-export function useCharacters(params: ResourceListParams = {}) {
+interface ResourceListQueryOptions {
+  enabled?: boolean
+}
+
+export function useCharacters(
+  params: ResourceListParams = {},
+  options: ResourceListQueryOptions = {},
+) {
   return useQuery({
     queryKey: ['characters', 'list', params],
     queryFn: ({ signal }) => getCharacters(params, signal),
+    enabled: options.enabled,
   })
 }
 

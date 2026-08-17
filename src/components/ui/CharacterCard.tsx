@@ -3,6 +3,8 @@ import { HouseBadge, StatusBadge, type StatusBadgeState } from './Badge'
 import { HouseSigil } from './HouseSigil'
 import type { HouseTheme } from './house-theme'
 
+type CharacterCardVariant = 'default' | 'featured'
+
 interface CharacterCardProps {
   actor?: string | null
   alias?: string | null
@@ -19,6 +21,7 @@ interface CharacterCardProps {
     state: StatusBadgeState
   }
   to?: string
+  variant?: CharacterCardVariant
 }
 
 export function CharacterCard({
@@ -31,6 +34,7 @@ export function CharacterCard({
   name,
   status,
   to,
+  variant = 'default',
 }: CharacterCardProps) {
   const initials = name
     .split(/\s+/)
@@ -40,7 +44,10 @@ export function CharacterCard({
     .toLocaleUpperCase('es')
 
   const card = (
-    <article className="character-card" data-house={houseTheme}>
+    <article
+      className={variant === 'featured' ? 'character-card character-card--featured' : 'character-card'}
+      data-house={houseTheme}
+    >
       <div className="character-card__media">
         {image ? (
           <img
@@ -56,6 +63,9 @@ export function CharacterCard({
             {initials}
           </span>
         )}
+        {variant === 'featured' && houseTheme && (
+          <HouseSigil className="character-card__corner-sigil" decorative house={houseTheme} size={32} />
+        )}
         {status && (
           <StatusBadge
             className="absolute top-3 right-3 z-20"
@@ -65,10 +75,10 @@ export function CharacterCard({
         )}
       </div>
       <div className="min-w-0 flex-1 p-4 sm:p-5">
-        {house && houseTheme ? (
+        {house && houseTheme && variant !== 'featured' ? (
           <HouseBadge house={houseTheme} label={house} />
         ) : house ? (
-          <p className="font-sans text-[0.625rem] uppercase tracking-[0.16em] text-parchment">
+          <p className={variant === 'featured' ? 'character-card__house-label' : 'font-sans text-[0.625rem] uppercase tracking-[0.16em] text-parchment'}>
             {house}
           </p>
         ) : null}
