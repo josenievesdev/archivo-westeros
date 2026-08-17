@@ -1,10 +1,15 @@
-# Realms of Westeros
+# Archivo de Westeros
 
-Aplicación web inmersiva, en fase inicial, para consultar y comprender personajes,
-casas y relaciones del universo de **Game of Thrones / A Song of Ice and Fire**
-mientras se ve la serie.
+**Guía viva de los Siete Reinos**
 
-> **Estado:** foundation técnica. El nombre y la identidad visual son provisionales.
+> Nadie recuerda todos los nombres. Nosotros sí.
+
+Aplicación web mobile-first para consultar y comprender personajes, casas y
+relaciones del universo de **Game of Thrones / A Song of Ice and Fire** mientras se
+ve la serie. Su concepto visual es **piedra, brasa y pergamino**.
+
+> **Estado:** foundation técnica y visual. La identidad base está definida; las
+> pantallas completas y las capacidades avanzadas siguen en desarrollo.
 
 ## Qué problema resuelve
 
@@ -17,6 +22,8 @@ explorando Westeros.
 ## Propuesta
 
 - Consultas claras de personajes, casas, títulos, familia y lealtades.
+- Experiencia mobile-first para consultas breves durante un episodio, ampliada
+  progresivamente en tablet y escritorio.
 - Navegación visual por linajes, cronologías, mapas y relaciones políticas.
 - Un futuro **Spoiler Shield** ajustado por temporada y episodio.
 - Una experiencia progresivamente inmersiva con audio, ambiente, fuego, hielo,
@@ -37,11 +44,15 @@ La primera etapa incluye:
 - Separación entre respuestas externas, normalizadores y modelos internos.
 - Caché y ciclo de peticiones mediante TanStack Query.
 - Tailwind CSS v4 para la base de estilos.
+- Tokens, tipografías, temas de casas y primitivas visuales extraídos de la referencia
+  aprobada de pen.dev.
+- Header responsive y navegación móvil inferior con safe areas.
 - Tests mínimos de render y normalización.
 - Documentación de visión, datos, diseño, roadmap y decisiones técnicas.
 
 No incluye todavía Supabase, Three.js, persistencia propia, modelos 3D, audio,
-Spoiler Shield ni el diseño definitivo de pen.dev.
+Spoiler Shield completo, motor global de búsqueda ni las pantallas completas de la
+referencia visual.
 
 ## Stack
 
@@ -52,6 +63,7 @@ Spoiler Shield ni el diseño definitivo de pen.dev.
 | Estilos | Tailwind CSS v4 |
 | Rutas | React Router 7 |
 | Estado remoto | TanStack Query 5 |
+| Iconografía | Lucide React |
 | Tests | Vitest + Testing Library + jsdom |
 | Lint | Oxlint |
 | Gestor de paquetes | npm |
@@ -99,6 +111,7 @@ npm run preview
 
 ```text
 realms-got/
+├── got_poryect_pen.dev.pen  # Fuente visual principal, inspeccionada con Pencil MCP
 ├── docs/                    # Visión, roadmap y decisiones
 ├── public/                  # Audio, iconos, imágenes y texturas futuras
 ├── scripts/                 # Sincronización y semillas futuras
@@ -155,6 +168,7 @@ reescribir la interfaz. Consulta [docs/arquitectura-datos.md](docs/arquitectura-
 | `/linajes` | Placeholder. |
 | `/cronologia` | Placeholder. |
 | `/mesa-de-guerra` | Placeholder. |
+| `/mas` | Hub compacto para la navegación móvil. |
 
 ## Variables de entorno
 
@@ -180,9 +194,12 @@ spoilers, eventos, relaciones, imágenes, ubicaciones, batallas y cronologías.
 
 ## Documentación
 
-El índice completo se encuentra en [docs/README.md](docs/README.md). Los documentos
-registran tanto la dirección deseada como lo que deliberadamente queda fuera de esta
-fase.
+El índice completo se encuentra en [docs/README.md](docs/README.md). La fuente visual
+principal es [`got_poryect_pen.dev.pen`](got_poryect_pen.dev.pen): define apariencia,
+composición desktop, jerarquía, paleta y patrones. Los documentos fijan visión,
+alcance, restricciones editoriales, accesibilidad y decisiones técnicas. El código
+conserva la autoridad sobre arquitectura, rutas, modelos, normalizadores, consultas y
+tests.
 
 ## Aviso
 

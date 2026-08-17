@@ -1,43 +1,68 @@
-import { Link } from 'react-router-dom'
+import { UserRoundX, WifiOff } from 'lucide-react'
+import { CharacterCard } from '../../../components/ui/CharacterCard'
+import { EmptyState, Skeleton } from '../../../components/ui/Feedback'
+import { SectionTitle } from '../../../components/ui/SectionTitle'
 import { useCharacters } from '../api/use_characters'
 
 export function PersonajesPage() {
   const characters = useCharacters({ page: 1, pageSize: 12 })
 
   return (
-    <section className="space-y-8">
-      <header className="max-w-2xl space-y-3">
-        <p className="text-sm uppercase tracking-[0.2em] text-amber-200/70">
-          Archivo inicial
-        </p>
-        <h1 className="font-serif text-4xl text-stone-100 sm:text-5xl">Personajes</h1>
-        <p className="leading-7 text-stone-400">
-          Primera lectura normalizada de personajes. Búsqueda, filtros y Spoiler
-          Shield llegarán en fases posteriores.
-        </p>
-      </header>
+    <section aria-labelledby="characters-title" className="space-y-8 sm:space-y-10">
+      <SectionTitle
+        description="Consulta la primera colección normalizada. La búsqueda global, los filtros y el Spoiler Shield llegarán en fases posteriores."
+        eyebrow="Archivo de almas"
+        headingAs="h1"
+        headingId="characters-title"
+        size="page"
+        title="Personajes"
+      />
 
-      {characters.isPending && <p className="text-stone-400">Cargando personajes...</p>}
-      {characters.isError && (
-        <p className="text-red-300">No fue posible obtener los personajes.</p>
+      {characters.isPending && (
+        <div aria-label="Cargando personajes" role="status">
+          <span className="sr-only">Cargando personajes...</span>
+          <ul
+            aria-hidden="true"
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          >
+            {Array.from({ length: 8 }, (_, index) => (
+              <li key={index}>
+                <Skeleton className="h-36 sm:h-[25rem]" />
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
-      {characters.data && (
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {characters.isError && (
+        <EmptyState
+          description="La fuente externa no respondió. La navegación local permanece disponible."
+          icon={<WifiOff aria-hidden="true" className="size-5" />}
+          role="alert"
+          title="No fue posible obtener los personajes"
+        />
+      )}
+      {characters.data?.length === 0 && (
+        <EmptyState
+          description="No se recibieron personajes para esta primera página del archivo."
+          icon={<UserRoundX aria-hidden="true" className="size-5" />}
+          title="El archivo está vacío"
+        />
+      )}
+      {characters.data && characters.data.length > 0 && (
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {characters.data.map((character) => {
             const displayName =
               character.name || character.aliases[0] || 'Sin nombre conocido'
 
             return (
               <li key={character.id}>
-                <Link
-                  className="block h-full rounded-lg border border-stone-800 bg-stone-900/50 p-5 transition-colors hover:border-stone-600"
+                <CharacterCard
+                  actor={character.playedBy[0]}
+                  alias={character.aliases[0]}
+                  description={character.culture || 'Cultura no indicada'}
+                  name={displayName}
                   to={`/personajes/${character.id}`}
-                >
-                  <h2 className="font-serif text-xl text-stone-100">{displayName}</h2>
-                  <p className="mt-2 text-sm text-stone-500">
-                    {character.culture || 'Cultura no indicada'}
-                  </p>
-                </Link>
+                />
               </li>
             )
           })}

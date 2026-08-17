@@ -52,8 +52,9 @@ futuras se reservan conceptualmente sin cargar todavía sus dependencias o lógi
 **Decisión:** integrar Tailwind mediante su plugin oficial de Vite y una única entrada
 global.
 
-**Razón:** permite iterar la futura referencia de pen.dev sin construir ahora un
-sistema de componentes prematuro. La UI actual solo establece una base funcional.
+**Razón:** permite traducir progresivamente `got_poryect_pen.dev.pen` mediante tokens
+CSS y componentes pequeños, sin mantener una configuración paralela ni improvisar un
+sistema visual alternativo.
 
 ## ADR-007 — Vitest + Testing Library
 
@@ -99,3 +100,36 @@ Winterfell, King's Landing, The Wall o Daenerys Targaryen.
 
 **Razón:** permite probar otra base de integración sin fingir credenciales de servicios
 que aún no existen. La URL pública predeterminada mantiene el arranque inmediato.
+
+## ADR-013 — Interfaz mobile-first
+
+**Decisión:** construir estilos y componentes desde los viewports de 375, 390 y 430 px,
+y ampliar progresivamente en 768, 1024 y 1440 px.
+
+**Razón:** el caso de uso principal ocurre en teléfono mientras se ve un episodio. Las
+acciones esenciales necesitan objetivos táctiles de al menos 44 px, safe areas y
+funcionamiento sin hover. El desktop conserva la composición aprobada, pero no se
+comprime literalmente para crear móvil.
+
+## ADR-014 — Fuente visual principal
+
+**Decisión:** usar `got_poryect_pen.dev.pen` como fuente principal para apariencia,
+composición desktop, paleta, tipografía, superficies, jerarquía, navegación y patrones.
+El archivo se inspecciona mediante Pencil MCP y no se procesa como texto en el flujo de
+diseño.
+
+**Razón:** establece trazabilidad visual sin convertir la estructura de capas del mock
+en arquitectura React. `/docs` mantiene autoridad sobre producto, contenido,
+accesibilidad, idioma y spoilers; el código mantiene autoridad sobre datos, rutas,
+queries, modelos y tests.
+
+## ADR-015 — Temas de casas mediante variables CSS
+
+**Decisión:** aplicar `data-house` y variables CSS para Stark, Lannister, Targaryen,
+Baratheon, Greyjoy, Tyrell y Martell. Los componentes compartidos consumen acento y
+material sin duplicarse por casa.
+
+**Razón:** el `.pen` cambia la temperatura y el material de cada casa, no la estructura
+de la interfaz. Esta solución permite que `HouseSigil`, `HousePiece`, badges y tarjetas
+compartan semántica y deja una ranura visual para sustituir CSS por SVG, imágenes o
+Three.js en una fase posterior.

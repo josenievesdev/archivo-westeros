@@ -1,4 +1,10 @@
+import { ArrowLeft, ShieldX } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
+import { EmptyState, Skeleton } from '../../../components/ui/Feedback'
+import { HouseSigil } from '../../../components/ui/HouseSigil'
+import { SectionTitle } from '../../../components/ui/SectionTitle'
+import { Surface } from '../../../components/ui/Surface'
+import { getHouseThemeFromName } from '../../../components/ui/house-theme'
 import { useHouse } from '../api/use_houses'
 
 export function CasaDetallePage() {
@@ -6,53 +12,85 @@ export function CasaDetallePage() {
   const house = useHouse(id)
 
   if (!id) {
-    return <p className="text-red-300">El identificador de la casa no es válido.</p>
+    return (
+      <EmptyState
+        description="La URL no contiene un identificador que podamos consultar."
+        headingAs="h1"
+        icon={<ShieldX aria-hidden="true" className="size-5" />}
+        role="alert"
+        title="El identificador de la casa no es válido"
+      />
+    )
   }
 
   if (house.isPending) {
-    return <p className="text-stone-400">Cargando casa...</p>
+    return (
+      <div aria-label="Cargando casa" className="max-w-4xl space-y-6" role="status">
+        <span className="sr-only">Cargando casa...</span>
+        <Skeleton className="h-5 w-36" />
+        <Skeleton className="h-20 max-w-xl" />
+        <Skeleton className="h-72" />
+      </div>
+    )
   }
 
   if (house.isError) {
-    return <p className="text-red-300">No fue posible obtener esta casa.</p>
+    return (
+      <EmptyState
+        description="La fuente externa no devolvió una ficha válida para esta ruta."
+        headingAs="h1"
+        icon={<ShieldX aria-hidden="true" className="size-5" />}
+        role="alert"
+        title="No fue posible obtener esta casa"
+      />
+    )
   }
 
+  const theme = getHouseThemeFromName(house.data.name)
+
   return (
-    <article className="max-w-3xl space-y-8">
-      <Link className="text-sm text-stone-500 hover:text-stone-300" to="/casas">
+    <article className="max-w-4xl space-y-8 sm:space-y-10" data-house={theme}>
+      <Link
+        className="inline-flex min-h-11 items-center gap-2 font-sans text-sm text-parchment hover:text-bone"
+        to="/casas"
+      >
+        <ArrowLeft aria-hidden="true" className="size-4 text-[var(--house-accent)]" />
         Volver a casas
       </Link>
-      <header className="space-y-3">
-        <p className="text-sm uppercase tracking-[0.2em] text-amber-200/70">Casa</p>
-        <h1 className="font-serif text-4xl text-stone-100 sm:text-5xl">
-          {house.data.name}
-        </h1>
-        <p className="text-stone-400">{house.data.region || 'Región no indicada'}</p>
+      <header className="flex items-start gap-4 sm:gap-6">
+        {theme && (
+          <span className="mt-1 grid size-14 flex-none place-items-center rounded-full border border-etch bg-stone sm:size-20">
+            <HouseSigil decorative house={theme} size={36} />
+          </span>
+        )}
+        <SectionTitle
+          description={house.data.region || 'Región no indicada'}
+          eyebrow="Casa"
+          headingAs="h1"
+          size="page"
+          title={house.data.name}
+        />
       </header>
-      <dl className="grid gap-6 rounded-lg border border-stone-800 bg-stone-900/50 p-6 sm:grid-cols-2">
-        <div>
-          <dt className="text-sm text-stone-500">Lema</dt>
-          <dd className="mt-1 text-stone-200">{house.data.words || 'No indicado'}</dd>
-        </div>
-        <div>
-          <dt className="text-sm text-stone-500">Asientos</dt>
-          <dd className="mt-1 text-stone-200">
-            {house.data.seats.join(', ') || 'No indicados'}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-sm text-stone-500">Títulos</dt>
-          <dd className="mt-1 text-stone-200">
-            {house.data.titles.join(', ') || 'No indicados'}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-sm text-stone-500">Armas ancestrales</dt>
-          <dd className="mt-1 text-stone-200">
-            {house.data.ancestralWeapons.join(', ') || 'No indicadas'}
-          </dd>
-        </div>
-      </dl>
+      <Surface className="p-5 sm:p-7">
+        <dl className="grid gap-0 sm:grid-cols-2">
+          {[
+            ['Lema', house.data.words || 'No indicado'],
+            ['Asientos', house.data.seats.join(', ') || 'No indicados'],
+            ['Títulos', house.data.titles.join(', ') || 'No indicados'],
+            [
+              'Armas ancestrales',
+              house.data.ancestralWeapons.join(', ') || 'No indicadas',
+            ],
+          ].map(([term, value]) => (
+            <div className="border-b border-etch py-5 sm:px-5 sm:odd:pl-0 sm:even:pr-0" key={term}>
+              <dt className="font-sans text-xs uppercase tracking-[0.12em] text-parchment">
+                {term}
+              </dt>
+              <dd className="mt-2 font-serif text-lg leading-7 text-bone">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      </Surface>
     </article>
   )
 }

@@ -9,6 +9,7 @@ import { MesaDeGuerraPage } from '../../features/mesa-de-guerra/pages/MesaDeGuer
 import { PersonajeDetallePage } from '../../features/personajes/pages/PersonajeDetallePage'
 import { PersonajesPage } from '../../features/personajes/pages/PersonajesPage'
 import { AppLayout } from '../layout/AppLayout'
+import { MasPage } from './MasPage'
 import { NotFoundPage } from './NotFoundPage'
 
 export function AppRouter() {
@@ -25,6 +26,7 @@ export function AppRouter() {
           <Route path="linajes" element={<ArbolGenealogicoPage />} />
           <Route path="cronologia" element={<CronologiaPage />} />
           <Route path="mesa-de-guerra" element={<MesaDeGuerraPage />} />
+          <Route path="mas" element={<MasPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

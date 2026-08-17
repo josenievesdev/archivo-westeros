@@ -12,8 +12,10 @@ sus criterios de calidad antes de añadir complejidad visual o de datos.
 - Capa para An API of Ice and Fire con DTOs, normalizadores y modelos internos.
 - Rutas principales y una interfaz temporal.
 - Documentación de visión, contenido, datos y decisiones.
+- Foundation visual extraída de `got_poryect_pen.dev.pen`: tokens, tipografías,
+  superficies, temas de casas, primitives y navegación responsive.
 
-**Estado:** completada en su alcance inicial.
+**Estado:** completada en su alcance técnico y visual inicial.
 
 ## Fase 2 — Personajes
 
@@ -24,6 +26,8 @@ sus criterios de calidad antes de añadir complejidad visual o de datos.
 - Ficha con títulos, familia, relaciones, lealtades, temporadas y actor.
 - Resolución eficiente de referencias entre recursos.
 - Pruebas de hooks, errores y navegación.
+- Integración del buscador visual, listado y ficha sobre la foundation mobile-first,
+  sin copiar contenido spoiler de los mocks.
 
 ## Fase 3 — Casas
 
@@ -61,13 +65,14 @@ sus criterios de calidad antes de añadir complejidad visual o de datos.
 - Audio ambiental con controles claros.
 - Fuego, hielo, nieve, humo y ceniza en pruebas controladas.
 - Transiciones coherentes con navegación y rendimiento.
-- Validación de la dirección visual desarrollada en pen.dev.
+- Validación de los efectos ambientales contra la dirección aprobada en
+  `got_poryect_pen.dev.pen`.
 
 ## Fase 7 — Piezas de guerra
 
 **Objetivo:** crear un lenguaje visual para casas y fuerzas.
 
-- Prototipos de piezas heráldicas tipo ajedrez.
+- Evolución de la primitive 2D/CSS `HousePiece` hacia piezas heráldicas interactivas.
 - Evaluación técnica de Three.js cuando exista un caso validado.
 - Niveles de detalle y alternativa 2D.
 - Interacciones, selección y estados de las piezas.
@@ -90,7 +95,11 @@ sus criterios de calidad antes de añadir complejidad visual o de datos.
 - Piezas interactivas y estados por episodio.
 - Modo de exploración accesible sin efectos avanzados.
 
-## Criterio transversal
+## Criterios transversales
 
 Supabase, PostgreSQL, Three.js y Cloudflare se evaluarán cuando una fase los necesite.
 No se incorporarán solo para anticipar un futuro posible.
+
+Todas las fases parten de móvil y mejoran progresivamente para tablet y escritorio.
+Las decisiones visuales deben conservar trazabilidad con `got_poryect_pen.dev.pen`,
+sin desplazar las reglas editoriales, de accesibilidad o de arquitectura documentadas.

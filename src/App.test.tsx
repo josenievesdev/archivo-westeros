@@ -45,6 +45,7 @@ const houseResponse = [
 ]
 
 test('renderiza la aplicación y confirma la conexión de datos', async () => {
+  window.history.pushState({}, '', '/')
   vi.stubGlobal(
     'fetch',
     vi.fn(async (input: RequestInfo | URL) => {
@@ -63,9 +64,31 @@ test('renderiza la aplicación y confirma la conexión de datos', async () => {
   render(<App />)
 
   expect(
-    screen.getByRole('heading', { level: 1, name: 'Realms of Westeros' }),
+    screen.getByRole('heading', { level: 1, name: 'Nadie recuerda todos los nombres' }),
   ).toBeInTheDocument()
+  expect(
+    screen.getByRole('link', { name: 'Archivo de Westeros, inicio' }),
+  ).toBeInTheDocument()
+  expect(screen.getByRole('navigation', { name: 'Navegación móvil' })).toBeInTheDocument()
   expect(await screen.findByText('Conexión disponible')).toBeInTheDocument()
   expect(screen.getByText('Jon Snow')).toBeInTheDocument()
   expect(screen.getByText('House Stark of Winterfell')).toBeInTheDocument()
+})
+
+test('la ruta más activa el destino correspondiente de la navegación móvil', () => {
+  window.history.pushState({}, '', '/mas')
+  render(<App />)
+
+  expect(screen.getByRole('heading', { level: 1, name: 'Más secciones' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Más' })).toHaveAttribute('aria-current', 'page')
+})
+
+test('una ruta 404 con prefijo parecido no marca un destino como activo', () => {
+  window.history.pushState({}, '', '/personajes-no-existe')
+  render(<App />)
+
+  expect(
+    screen.getByRole('heading', { level: 1, name: 'Ruta no encontrada' }),
+  ).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Buscar' })).not.toHaveAttribute('aria-current')
 })
