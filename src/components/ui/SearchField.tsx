@@ -73,31 +73,55 @@ export function SearchField({
 
   return (
     <div className={cx('w-full', className)}>
-      <form aria-busy={loading} role="search" onSubmit={handleSubmit}>
+      <form
+        aria-busy={loading}
+        className={prominent ? 'search-field--prominent' : undefined}
+        role="search"
+        onSubmit={handleSubmit}
+      >
         <label className="sr-only" htmlFor={inputId}>
           {label}
         </label>
         <div
           className={cx(
-            'group relative flex min-h-16 items-center gap-2 rounded-etched border border-old-gold bg-[#0d0f13e6] p-2 pl-4 shadow-search transition-[border-color,box-shadow] focus-within:border-gold focus-within:shadow-[0_0_0_1px_#c9a44c40,0_24px_60px_-10px_#000000b3] sm:pl-6',
-            prominent && 'min-h-[4.875rem]',
+            'group relative flex items-center rounded-etched border border-old-gold bg-[#0d0f13e6] shadow-search transition-[border-color,box-shadow] focus-within:border-gold focus-within:shadow-[0_0_0_1px_#c9a44c40,0_24px_60px_-10px_#000000b3]',
+            prominent
+              ? 'h-[4.875rem] gap-4 py-0 pr-[0.625rem] pl-[1.625rem]'
+              : 'min-h-16 gap-2 p-2 pl-4 sm:pl-6',
           )}
         >
           {prominent && (
             <>
-              <span aria-hidden="true" className="absolute -top-1.5 -left-1.5 size-3 border-t border-l border-gold" />
-              <span aria-hidden="true" className="absolute -top-1.5 -right-1.5 size-3 border-t border-r border-gold" />
-              <span aria-hidden="true" className="absolute -bottom-1.5 -left-1.5 size-3 border-b border-l border-gold" />
-              <span aria-hidden="true" className="absolute -right-1.5 -bottom-1.5 size-3 border-r border-b border-gold" />
+              <span
+                aria-hidden="true"
+                className="absolute -top-[0.3125rem] -left-[0.3125rem] size-2.5 border-t border-l border-gold"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute -top-[0.3125rem] -right-[0.3125rem] size-2.5 border-t border-r border-gold"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute -bottom-[0.3125rem] -left-[0.3125rem] size-2.5 border-b border-l border-gold"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute -right-[0.3125rem] -bottom-[0.3125rem] size-2.5 border-r border-b border-gold"
+              />
             </>
           )}
-          <Search aria-hidden="true" className="size-5 flex-none text-gold" />
+          <Search
+            aria-hidden="true"
+            className={prominent
+              ? 'size-[1.3125rem] flex-none text-gold'
+              : 'size-5 flex-none text-gold'}
+          />
           <input
             aria-keyshortcuts={shortcut ? 'Meta+K Control+K' : undefined}
             aria-describedby={describedBy || undefined}
             className={cx(
               'min-h-12 min-w-0 flex-1 border-0 bg-transparent px-1 font-serif text-base text-bone outline-none placeholder:text-parchment disabled:cursor-not-allowed disabled:opacity-50 sm:text-lg',
-              prominent && 'sm:text-xl',
+              prominent && 'px-0 sm:text-xl',
             )}
             disabled={disabled}
             id={inputId}
@@ -123,14 +147,22 @@ export function SearchField({
             </IconButton>
           )}
           {shortcut && !value && (
-            <kbd className="hidden flex-none rounded-etched border border-etch px-2 py-1 font-sans text-[0.6875rem] tracking-[0.08em] text-parchment lg:inline-flex">
+            <kbd className="hidden h-6 flex-none items-center rounded-etched border border-etch px-[0.5625rem] font-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.0375rem] text-ash lg:inline-flex">
               {shortcut}
             </kbd>
+          )}
+          {prominent && onSubmit && (
+            <span
+              aria-hidden="true"
+              className="hidden h-[2.125rem] w-px flex-none bg-etch sm:block"
+            />
           )}
           {onSubmit && (
             <span className="hidden sm:contents">
               <Button
-                className="flex-none"
+                className={prominent
+                  ? 'h-12 min-h-12 flex-none px-[1.875rem] text-[0.71875rem] tracking-[0.15rem]'
+                  : 'flex-none'}
                 disabled={disabled}
                 loading={loading}
                 type="submit"

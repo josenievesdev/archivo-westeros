@@ -50,7 +50,9 @@ futuras se reservan conceptualmente sin cargar todavía sus dependencias o lógi
 ## ADR-006 — Tailwind CSS v4
 
 **Decisión:** integrar Tailwind mediante su plugin oficial de Vite y una única entrada
-global.
+global. Los tokens y las primitivas compartidas permanecen allí; una feature puede
+añadir una hoja de estilos acotada por convención cuando su geometría editorial sea
+demasiado densa para expresarla con utilidades aisladas.
 
 **Razón:** permite traducir progresivamente `got_poryect_pen.dev.pen` mediante tokens
 CSS y componentes pequeños, sin mantener una configuración paralela ni improvisar un
@@ -113,15 +115,16 @@ comprime literalmente para crear móvil.
 
 ## ADR-014 — Fuente visual principal
 
-**Decisión:** usar `got_poryect_pen.dev.pen` como fuente principal para apariencia,
-composición desktop, paleta, tipografía, superficies, jerarquía, navegación y patrones.
-El archivo se inspecciona mediante Pencil MCP y no se procesa como texto en el flujo de
-diseño.
+**Decisión:** usar `got_poryect_pen.dev.pen` como fuente visual editable y
+`got_poryect_pen.dev.html` como especificación técnica visual desktop. El `.pen` se
+inspecciona mediante Pencil MCP; el HTML permite consultar medidas, estilos, SVG y
+jerarquía `data-pencil-name` sin trasladar su canvas absoluto a React.
 
 **Razón:** establece trazabilidad visual sin convertir la estructura de capas del mock
-en arquitectura React. `/docs` mantiene autoridad sobre producto, contenido,
-accesibilidad, idioma y spoilers; el código mantiene autoridad sobre datos, rutas,
-queries, modelos y tests.
+en arquitectura React. El HTML exportado es solo una referencia de desarrollo: no se
+importa, no se renderiza mediante `iframe` y no forma parte del bundle de producción.
+`/docs` mantiene autoridad sobre producto, contenido, accesibilidad, idioma y spoilers;
+el código mantiene autoridad sobre datos, rutas, queries, modelos y tests.
 
 ## ADR-015 — Temas de casas mediante variables CSS
 
@@ -133,3 +136,13 @@ material sin duplicarse por casa.
 de la interfaz. Esta solución permite que `HouseSigil`, `HousePiece`, badges y tarjetas
 compartan semántica y deja una ranura visual para sustituir CSS por SVG, imágenes o
 Three.js en una fase posterior.
+
+## ADR-016 — Configuración editorial de Home
+
+**Decisión:** mantener IDs estables, labels de respaldo y alias conocidos dentro de la
+feature de Home, consumiendo los datos remotos mediante los hooks y modelos normalizados
+existentes.
+
+**Razón:** An API of Ice and Fire filtra listas por nombre y no cubre toda la capa
+editorial. La configuración permite accesos rápidos y degradación segura sin crear
+entidades duplicadas, alterar DTOs externos ni prometer una búsqueda global por títulos.

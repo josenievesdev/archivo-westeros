@@ -2,13 +2,21 @@
 
 ## Estado
 
-El nombre, el descriptor, el concepto y la dirección visual base están aprobados. El
-archivo [`got_poryect_pen.dev.pen`](../got_poryect_pen.dev.pen) es la fuente visual
-principal del frontend y debe inspeccionarse mediante Pencil MCP, no como texto plano.
+El nombre, el descriptor, el concepto y la dirección visual base están aprobados. Las
+fuentes de diseño se conservan juntas en la raíz:
+
+- [`got_poryect_pen.dev.pen`](../got_poryect_pen.dev.pen) es la fuente visual editable y
+  debe inspeccionarse mediante Pencil MCP, no como texto plano.
+- [`got_poryect_pen.dev.html`](../got_poryect_pen.dev.html) es la especificación técnica
+  visual desktop para medidas, estilos y jerarquía `data-pencil-name`.
+
+El HTML exportado se utiliza únicamente como referencia de desarrollo. No se importa,
+no se muestra mediante `iframe` y no forma parte del bundle de producción.
 
 La foundation de código ya incorpora tokens, tipografías, superficies, temas de casas,
-primitivas reutilizables, header y navegación móvil. Esto no significa que todas las
-pantallas del diseño estén implementadas.
+primitivas reutilizables, header y navegación móvil. `01 · Home` ya está traducida a
+React con búsqueda funcional y adaptación responsive; las demás pantallas siguen
+siendo referencias pendientes.
 
 ## Marca, descriptor y concepto
 
@@ -23,11 +31,12 @@ oficial de la franquicia.
 
 ## Jerarquía de fuentes
 
-1. `got_poryect_pen.dev.pen` gobierna apariencia, composición desktop, jerarquía,
-   paleta, tipografía, superficies, piezas, navegación y atmósfera.
-2. `/docs` gobierna producto, contenido, idioma, accesibilidad, Spoiler Shield, alcance
+1. `got_poryect_pen.dev.pen` gobierna la referencia visual editable y la comparación.
+2. `got_poryect_pen.dev.html` precisa dimensiones, espaciado, color, gradientes,
+   tipografía, SVG y jerarquía desktop.
+3. `/docs` gobierna producto, contenido, idioma, accesibilidad, Spoiler Shield, alcance
    y decisiones técnicas.
-3. El código existente gobierna arquitectura React, rutas, modelos, normalizadores,
+4. El código existente gobierna arquitectura React, rutas, modelos, normalizadores,
    TanStack Query, integración con An API of Ice and Fire y tests.
 
 La implementación traduce el diseño sin copiar su estructura de capas ni introducir
@@ -37,8 +46,8 @@ contenido ficticio para completar datos que la API no posee.
 
 El archivo `.pen` contiene seis vistas desktop y un grupo de componentes:
 
-- `01 · Home`: hero, buscador principal, grandes casas, personajes, linajes e
-  inmersión.
+- `01 · Home` — implementada: hero, buscador principal, grandes casas, personajes,
+  linajes e inmersión.
 - `02 · Ficha de personaje`: identidad, datos rápidos, línea de vida, vínculos y
   paneles laterales.
 - `03 · Ficha de casa`: identidad temática, datos, miembros, sucesión y casas
@@ -165,6 +174,9 @@ La dirección desktop conserva el contenedor de 1224 px dentro de un lienzo de 1
 La implementación es mobile-first y parte de 375, 390 y 430 px antes de ampliar en
 768, 1024 y 1440 px.
 
+Los cortes de contenido de 1200 px para el tablero de casas y 1264 px para las cinco
+tarjetas complementan esos viewports de revisión y evitan recortes intermedios.
+
 - Móvil usa gutters de 20 px, tarjetas de personaje horizontales y navegación inferior
   compacta.
 - Tablet amplía gutters, convierte rejillas a dos columnas y retira la navegación
@@ -205,7 +217,7 @@ La implementación es mobile-first y parte de 375, 390 y 430 px antes de ampliar
 
 ## Aplicación progresiva
 
-La foundation actual sirve como contrato visual. Las pantallas completas se construirán
-por feature cuando sus datos, estados, reglas editoriales y adaptación móvil estén
-definidos. La fidelidad desktop no justifica romper arquitectura, accesibilidad o
-rendimiento.
+La foundation actual sirve como contrato visual y Home es la primera traducción
+completa. Las pantallas restantes se construirán por feature cuando sus datos, estados,
+reglas editoriales y adaptación móvil estén definidos. La fidelidad desktop no
+justifica romper arquitectura, accesibilidad o rendimiento.

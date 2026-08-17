@@ -1,5 +1,5 @@
 import { Building2, SearchX, UserRound, WifiOff } from 'lucide-react'
-import { startTransition, useState } from 'react'
+import { startTransition, useState, type FocusEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { HouseSigil } from '../../../components/ui/HouseSigil'
 import { SearchField } from '../../../components/ui/SearchField'
@@ -37,6 +37,10 @@ export function HomeSearch() {
     startTransition(() => submitValue(term))
   }
 
+  function revealQuickTerm(event: FocusEvent<HTMLButtonElement>) {
+    event.currentTarget.scrollIntoView?.({ block: 'nearest', inline: 'nearest' })
+  }
+
   return (
     <div className="home-search">
       <SearchField
@@ -62,6 +66,7 @@ export function HomeSearch() {
                 data-house={item.theme}
                 key={item.term}
                 onClick={() => searchQuickTerm(item.term)}
+                onFocus={revealQuickTerm}
                 type="button"
               >
                 <span aria-hidden="true" className="size-1.5 rounded-full bg-[var(--house-accent)]" />

@@ -47,8 +47,8 @@ export function HomeFooter() {
             <p>Archivo de Westeros</p>
           </div>
           <p>
-            Proyecto de fans sin relación oficial con HBO ni con George R. R. Martin.
-            Construido con respeto por el material original.
+            Proyecto de fans. Sin relación con HBO ni con George R. R. Martin. Hecho
+            con respeto por el material original.
           </p>
         </div>
 

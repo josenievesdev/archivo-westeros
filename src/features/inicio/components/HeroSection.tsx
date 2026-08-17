@@ -7,11 +7,36 @@ const stats = [
   { label: 'tipos de búsqueda', value: '2' },
 ]
 
+const embers = [
+  '880-300',
+  '960-420',
+  '1040-250',
+  '1120-500',
+  '820-560',
+  '1200-360',
+  '760-420',
+  '1010-600',
+  '1160-220',
+  '900-660',
+]
+
 export function HeroSection() {
   return (
     <section aria-labelledby="home-title" className="home-hero">
-      <div aria-hidden="true" className="home-hero__ice-light" />
-      <div aria-hidden="true" className="home-hero__ember-light" />
+      <div aria-hidden="true" className="home-hero__atmosphere">
+        <span className="home-hero__ice-light" />
+        <span className="home-hero__beam home-hero__beam--300" />
+        <span className="home-hero__beam home-hero__beam--520" />
+        <span className="home-hero__beam home-hero__beam--700" />
+        <span className="home-hero__beam home-hero__beam--930" />
+        <span className="home-hero__ember-light" />
+        <span className="home-hero__ember-left" />
+        <span className="home-hero__vignette home-hero__vignette--left" />
+        <span className="home-hero__vignette home-hero__vignette--right" />
+        {embers.map((ember) => (
+          <i className="home-hero__ember" data-ember={ember} key={ember} />
+        ))}
+      </div>
       <div className="home-hero__content">
         <p className="home-eyebrow">Archivo abierto · Temporadas I–VIII</p>
         <span aria-hidden="true" className="home-ornament">

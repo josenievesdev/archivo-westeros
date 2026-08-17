@@ -32,12 +32,15 @@ export function GreatHousesSection() {
         <p className="home-eyebrow">Mesa de guerra</p>
         <h2 id="great-houses-title">Las Grandes Casas</h2>
         <p>
-          Cada pieza es un linaje. Pesan siglos de sangre, juramentos y alianzas.
+          Cada pieza es un linaje. Pesan siglos de sangre, juramentos y traiciones.
           Elige una y entra en su archivo.
         </p>
       </header>
 
       <div className="great-houses-board" role="list">
+        <div aria-hidden="true" className="great-houses-board__surface" />
+        <div aria-hidden="true" className="great-houses-board__horizon" />
+        <div aria-hidden="true" className="great-houses-board__ember" />
         <div className="great-houses-board__back">
           {supportingHouses.map((house) => (
             <div key={house.id} role="listitem">
@@ -52,6 +55,7 @@ export function GreatHousesSection() {
             </div>
           ))}
         </div>
+        <div aria-hidden="true" className="great-houses-board__mist" />
       </div>
 
       <div className="great-houses-mobile" role="list">

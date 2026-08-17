@@ -49,17 +49,11 @@ export function HousePiece({
           </>
         )}
       </div>
-      <figcaption className="-mt-1 w-full space-y-2 text-center">
-        <p className="font-display text-lg font-semibold uppercase tracking-[0.08em] text-bone sm:text-xl">
-          {name}
-        </p>
-        <span aria-hidden="true" className="mx-auto block h-px w-7 bg-[var(--house-accent)]" />
-        {motto && <p className="font-serif text-base italic text-parchment">{motto}</p>}
-        {region && (
-          <p className="font-sans text-[0.625rem] uppercase tracking-[0.17em] text-parchment">
-            {region}
-          </p>
-        )}
+      <figcaption className="house-piece__caption">
+        <p className="house-piece__name">{name}</p>
+        <span aria-hidden="true" className="house-piece__rule" />
+        {motto && <p className="house-piece__motto">{motto}</p>}
+        {region && <p className="house-piece__region">{region}</p>}
       </figcaption>
     </figure>
   )

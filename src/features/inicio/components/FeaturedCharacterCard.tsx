@@ -32,7 +32,7 @@ export function FeaturedCharacterCard({ character }: FeaturedCharacterCardProps)
       house={character.houseLabel}
       houseTheme={character.houseTheme}
       name={name}
-      status={{ label: 'En archivo', state: 'unknown' }}
+      status={{ label: 'Archivo', state: 'unknown' }}
       to={`/personajes/${character.id}`}
       variant="featured"
     />

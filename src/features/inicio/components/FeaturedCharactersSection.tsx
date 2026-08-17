@@ -1,4 +1,13 @@
-import { ArrowRight, ChevronDown, Filter, HeartPulse, Map, Shield, Star } from 'lucide-react'
+import {
+  ArrowRight,
+  ChevronDown,
+  Clapperboard,
+  Filter,
+  Handshake,
+  HeartPulse,
+  Map,
+  Shield,
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { FEATURED_CHARACTERS } from '../config/home-content'
 import { FeaturedCharacterCard } from './FeaturedCharacterCard'
@@ -7,7 +16,8 @@ const filters = [
   { icon: Shield, label: 'Casa' },
   { icon: HeartPulse, label: 'Estado' },
   { icon: Map, label: 'Región' },
-  { icon: Star, label: 'Temporada' },
+  { icon: Clapperboard, label: 'Temporada' },
+  { icon: Handshake, label: 'Lealtad' },
 ]
 
 export function FeaturedCharactersSection() {
