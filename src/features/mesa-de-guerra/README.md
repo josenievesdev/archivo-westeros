@@ -32,3 +32,14 @@ datos reales consiste en construir ese ViewModel desde las entidades canónicas.
 
 Three.js no está instalado y no existe aún modelo militar propio: el tablero se
 construye con CSS, SVG y los tokens de casa.
+
+## Spoilers
+
+`WarRoomFigureViewModel` es genérico (`label` / `value` / `tone`) y no modela
+estado de casa ni supervivientes: el contrato no debe obligar a suministrar
+métricas que revelan acontecimientos futuros mientras no exista Spoiler Shield.
+
+El fixture provisional solo reparte datos estructurales del archivo —registros,
+territorio y rango—, nunca `vivos`, `extinta`, `diezmada`, pérdidas ni resultados
+de batalla. Antes de enseñar esas métricas hay que conectar el nivel de
+protección; está anotado en `docs/backlog.md`.

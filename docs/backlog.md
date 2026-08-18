@@ -62,6 +62,12 @@ no representa prioridad ni compromiso de entrega.
 - Diseñar piezas estratégicas 2D antes de evaluar 3D.
 - Crear cronología de movimientos para la mesa de guerra.
 - Integrar eventos con mapa y Spoiler Shield.
+- Integrar la Sala de estrategia con Spoiler Shield antes de mostrar métricas
+  sensibles: supervivientes, estado de casa (en pie / diezmada / extinta),
+  fuerza posterior a batallas, pérdidas y extinción. El diseño de Pen las pinta,
+  pero el contrato `WarRoomFigureViewModel` es genérico a propósito y el fixture
+  provisional solo reparte datos estructurales del archivo, así que la pantalla
+  no anticipa nada mientras no exista el nivel de protección.
 
 ## Inmersión
 

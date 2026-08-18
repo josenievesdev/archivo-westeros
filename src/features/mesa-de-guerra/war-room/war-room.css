@@ -371,17 +371,16 @@
   background: currentcolor;
 }
 
-.war-room-cell__standing {
+/* Pen reserva la última cifra al color: allí iba el estado de la casa. Los tonos
+   son genéricos a propósito, para que ninguna dimensión traiga su semántica
+   —y su spoiler— pegada al estilo. */
+.war-room-cell__figure-text[data-tone="accent"] {
+  color: var(--color-gold);
   text-transform: uppercase;
 }
 
-.war-room-cell__standing[data-standing="standing"] {
-  color: var(--color-alive);
-}
-
-.war-room-cell__standing[data-standing="decimated"],
-.war-room-cell__standing[data-standing="extinct"] {
-  color: var(--color-fallen);
+.war-room-cell__figure-text[data-tone="muted"] {
+  color: color-mix(in srgb, var(--color-ash) 74%, transparent);
 }
 
 /* ---------------------------------------------------------- Modo apilado -- */

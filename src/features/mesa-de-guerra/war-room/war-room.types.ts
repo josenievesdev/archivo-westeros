@@ -21,24 +21,27 @@ export type WarRoomCriterion = (typeof WAR_ROOM_CRITERIA)[number]
  */
 export type WarRoomLayout = 'board' | 'list'
 
-/** Estado de la casa en el tablero: en pie, diezmada o extinta. */
-export type WarRoomStanding = 'standing' | 'decimated' | 'extinct'
+/** Peso visual de una cifra dentro de la fila. */
+export type WarRoomFigureTone = 'default' | 'accent' | 'muted'
 
 /**
- * La fila de cifras que Pen imprime bajo cada pieza.
+ * Una cifra genérica de la fila que Pen imprime bajo cada pieza.
  *
- * Son textos ya formateados porque la vista no decide plurales ni idioma. El
- * criterio activo ordena las piezas fuera de aquí; estas cifras no cambian.
+ * A propósito no modela estado de casa, supervivientes ni resultado de guerras:
+ * mientras no exista Spoiler Shield, el contrato no debe obligar a nadie a
+ * suministrar métricas que revelan acontecimientos futuros. Quien construya el
+ * ViewModel decide qué dimensiones puede mostrar según los datos reales, el
+ * criterio activo y el nivel de protección de spoilers.
  */
-export interface WarRoomFiguresViewModel {
-  /** p. ej. `48 miembros`. */
-  members?: string
-  /** p. ej. `11 vivos`. */
-  alive?: string
-  standing?: {
-    label: string
-    state: WarRoomStanding
-  }
+export interface WarRoomFigureViewModel {
+  /**
+   * Dimensión que representa la cifra, p. ej. `Miembros`. No se imprime: sirve
+   * para identificarla y para que quien conecte datos sepa qué está mapeando.
+   */
+  label: string
+  /** Texto ya redactado que se imprime, p. ej. `48 miembros`. */
+  value: string | number
+  tone?: WarRoomFigureTone
 }
 
 export interface WarRoomHouseViewModel {
@@ -52,7 +55,8 @@ export interface WarRoomHouseViewModel {
   words?: string
   /** Región y sede, p. ej. `The North · Winterfell`. */
   region?: string
-  figures?: WarRoomFiguresViewModel
+  /** Cifras impresas bajo el rótulo, en el orden en que deben leerse. */
+  figures?: WarRoomFigureViewModel[]
   /** Ruta interna a la ficha. Sin ruta la pieza no enlaza. */
   to?: string
 }

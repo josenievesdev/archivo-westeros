@@ -147,23 +147,45 @@ describe('WarRoomView', () => {
     ).toBeInTheDocument()
   })
 
-  it('imprime las cifras y el estado de cada casa', () => {
+  it('imprime las cifras recibidas en el orden del ViewModel', () => {
     const { container } = renderView()
 
-    const stark = container.querySelector('.war-room-cell[data-house="stark"]')
+    const stark = container.querySelector('.war-room-cell[data-house="stark"]') as HTMLElement
     expect(stark).not.toBeNull()
-    expect(within(stark as HTMLElement).getByText('48 miembros')).toBeInTheDocument()
-    expect(within(stark as HTMLElement).getByText('11 vivos')).toBeInTheDocument()
-    expect(within(stark as HTMLElement).getByText('En pie')).toHaveAttribute(
-      'data-standing',
-      'standing',
-    )
+    expect(
+      Array.from(stark.querySelectorAll('.war-room-cell__figure-text')).map(
+        (node) => node.textContent,
+      ),
+    ).toEqual(['48 miembros', 'Casa mayor'])
+    expect(within(stark).getByText('Casa mayor')).toHaveAttribute('data-tone', 'accent')
+  })
 
-    const targaryen = container.querySelector('.war-room-cell[data-house="targaryen"]')
-    expect(within(targaryen as HTMLElement).getByText('Extinta')).toHaveAttribute(
-      'data-standing',
-      'extinct',
-    )
+  it('pinta cualquier dimensión que reciba, sin conocer su semántica', () => {
+    const { container } = renderView({
+      ...warRoomFixture,
+      houses: [
+        {
+          ...warRoomFixture.houses[0],
+          figures: [
+            { label: 'Antigüedad', value: '8.000 años' },
+            { label: 'Poder', value: 12, tone: 'accent' },
+          ],
+        },
+      ],
+    })
+
+    const cell = container.querySelector('.war-room-cell') as HTMLElement
+    expect(within(cell).getByText('8.000 años')).toBeInTheDocument()
+    expect(within(cell).getByText('12')).toHaveAttribute('data-tone', 'accent')
+  })
+
+  it('omite la línea de cifras cuando el ViewModel no trae ninguna', () => {
+    const { container } = renderView({
+      ...warRoomFixture,
+      houses: [{ ...warRoomFixture.houses[0], figures: undefined }],
+    })
+
+    expect(container.querySelector('.war-room-cell__figures')).toBeNull()
   })
 
   it('encabeza la pantalla con el título recibido', () => {
@@ -207,6 +229,52 @@ describe('fixture de diseño de la sala de estrategia', () => {
     ])
     for (const house of warRoomFixture.houses) {
       expect(house.to).toMatch(/^\/casas\/\d+$/)
+    }
+  })
+
+  // Mientras no exista Spoiler Shield, esta pantalla no puede anticipar muertes
+  // ni desenlaces de guerra a quien va por la temporada 3.
+  it('no enseña supervivientes ni estado de casa', () => {
+    const printed = warRoomFixture.houses
+      .flatMap((house) => [
+        house.displayName,
+        house.words ?? '',
+        house.region ?? '',
+        ...(house.figures ?? []).map((figure) => String(figure.value)),
+      ])
+      .concat(warRoomFixture.description, warRoomFixture.title, warRoomFixture.eyebrow)
+      .join(' ')
+      .toLocaleLowerCase('es')
+
+    for (const term of [
+      'vivo',
+      'viva',
+      'superviviente',
+      'extint',
+      'diezmad',
+      'caíd',
+      'muert',
+      'baja',
+    ]) {
+      expect(printed).not.toContain(term)
+    }
+  })
+
+  it('solo reparte cifras estructurales del archivo', () => {
+    for (const house of warRoomFixture.houses) {
+      expect(house.figures?.map((figure) => figure.label)).toEqual([
+        'Miembros',
+        'Rango',
+      ])
+    }
+  })
+
+  /* Pen imprime la fila de cifras en una sola línea; si crece, empuja el tablero
+     entero por el `align-items: flex-end` de la formación. */
+  it('reparte cifras cortas para no partir la fila en dos líneas', () => {
+    for (const house of warRoomFixture.houses) {
+      const printed = (house.figures ?? []).map((figure) => String(figure.value)).join(' · ')
+      expect(printed.length).toBeLessThanOrEqual(30)
     }
   })
 

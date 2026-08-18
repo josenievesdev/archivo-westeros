@@ -1,37 +1,27 @@
-import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { HousePiece } from '../../../components/ui/HousePiece'
 import type { WarRoomHouseViewModel } from './war-room.types'
 
 /**
  * `Cifras`: la línea de datos que Pen imprime bajo el rótulo de cada pieza.
- * Los puntos separadores son decorativos y no se anuncian.
+ *
+ * Pinta lo que reciba, sin saber qué dimensión es cada cifra ni si es sensible:
+ * decidir qué se puede enseñar es trabajo de quien construya el ViewModel
+ * cuando exista Spoiler Shield. Los puntos separadores son decorativos.
  */
 function WarRoomFigures({ house }: { house: WarRoomHouseViewModel }) {
-  const { alive, members, standing } = house.figures ?? {}
-  const entries = [
-    members ? { key: 'members', node: members as ReactNode } : null,
-    alive ? { key: 'alive', node: alive as ReactNode } : null,
-    standing
-      ? {
-          key: 'standing',
-          node: (
-            <span className="war-room-cell__standing" data-standing={standing.state}>
-              {standing.label}
-            </span>
-          ) as ReactNode,
-        }
-      : null,
-  ].filter((entry) => entry !== null)
+  const figures = house.figures ?? []
 
-  if (entries.length === 0) return null
+  if (figures.length === 0) return null
 
   return (
     <span className="war-room-cell__figures">
-      {entries.map((entry, index) => (
-        <span className="war-room-cell__figure" key={entry.key}>
+      {figures.map((figure, index) => (
+        <span className="war-room-cell__figure" data-figure={figure.label} key={figure.label}>
           {index > 0 && <span aria-hidden="true" className="war-room-cell__dot" />}
-          <span className="war-room-cell__figure-text">{entry.node}</span>
+          <span className="war-room-cell__figure-text" data-tone={figure.tone ?? 'default'}>
+            {figure.value}
+          </span>
         </span>
       ))}
     </span>
