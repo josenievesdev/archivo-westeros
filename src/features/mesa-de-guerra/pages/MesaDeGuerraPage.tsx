@@ -1,11 +1,13 @@
-import { PlaceholderPage } from '../../../components/shared/PlaceholderPage'
+import { WarRoomView } from '../war-room/WarRoomView'
+import { warRoomFixture } from '../war-room/war_room.fixture'
 
+/**
+ * `04 · Sala de estrategia`.
+ *
+ * De momento sirve el fixture de diseño: la vista ya es presentacional pura, así
+ * que conectar la capa real consiste en sustituir este `warRoomFixture` por un
+ * `WarRoomViewModel` construido a partir de las entidades canónicas.
+ */
 export function MesaDeGuerraPage() {
-  return (
-    <PlaceholderPage
-      description="Una vista estratégica para relacionar casas, ejércitos, alianzas, guerras y batallas mediante piezas de juego."
-      eyebrow="Fase futura"
-      title="Mesa de guerra"
-    />
-  )
+  return <WarRoomView warRoom={warRoomFixture} />
 }

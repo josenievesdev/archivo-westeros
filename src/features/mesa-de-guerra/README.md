@@ -24,5 +24,11 @@ vista 3D opcional si el prototipo demuestra valor.
 
 ## Estado
 
-Ruta `/mesa-de-guerra` preparada con placeholder. Three.js no está instalado y no
-existe aún modelo militar propio.
+Ruta `/mesa-de-guerra` con la pantalla `04 · Sala de estrategia` implementada en
+`war-room/`: vista presentacional pura (`WarRoomView`) que recibe un
+`WarRoomViewModel` por props y de momento se alimenta de `war_room.fixture.ts`,
+un fixture de diseño. No consulta la API ni conoce TanStack Query; conectar los
+datos reales consiste en construir ese ViewModel desde las entidades canónicas.
+
+Three.js no está instalado y no existe aún modelo militar propio: el tablero se
+construye con CSS, SVG y los tokens de casa.
