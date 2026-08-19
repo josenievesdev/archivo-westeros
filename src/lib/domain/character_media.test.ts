@@ -107,7 +107,7 @@ describe('normalizeThronesCharacter', () => {
     expect(result.altText).toBe('Retrato de Daenerys Targaryen')
   })
 
-  test('should fallback to dto.fullName when canonical character has no name and no editorial', () => {
+  test('should fallback to generic name when canonical character has no name and no editorial', () => {
     const dto: ThronesCharacterDto = {
       id: 14,
       firstName: 'Tyrion',
@@ -127,8 +127,8 @@ describe('normalizeThronesCharacter', () => {
 
     const result = normalizeThronesCharacter(dto, canonicalCharacter)
 
-    // Should use dto.fullName as fallback
-    expect(result.altText).toBe('Retrato de Tyrion Lannister')
+    // Should use generic fallback
+    expect(result.altText).toBe('Retrato de personaje')
   })
 
   test('should not include title or family in CharacterMedia', () => {
@@ -176,6 +176,71 @@ describe('normalizeThronesCharacter', () => {
 
     expect(() => normalizeThronesCharacter(dto, canonicalCharacter)).toThrow(
       'Invalid imageUrl: not-a-valid-url'
+    )
+  })
+
+  test('should throw Error for imageUrl with invalid hostname', () => {
+    const dto: ThronesCharacterDto = {
+      id: 1,
+      firstName: 'Test',
+      lastName: 'User',
+      fullName: 'Test User',
+      title: '',
+      family: '',
+      image: 'test.jpg',
+      imageUrl: 'https://evilthronesapi.com/image.jpg',
+    }
+
+    const canonicalCharacter = createMockCanonicalCharacter({
+      id: 'ice-and-fire:character:1' as const,
+      name: 'Test User',
+    })
+
+    expect(() => normalizeThronesCharacter(dto, canonicalCharacter)).toThrow(
+      'Invalid imageUrl hostname: evilthronesapi.com'
+    )
+  })
+
+  test('should accept subdomain of thronesapi.com', () => {
+    const dto: ThronesCharacterDto = {
+      id: 1,
+      firstName: 'Test',
+      lastName: 'User',
+      fullName: 'Test User',
+      title: '',
+      family: '',
+      image: 'test.jpg',
+      imageUrl: 'https://cdn.thronesapi.com/example.jpg',
+    }
+
+    const canonicalCharacter = createMockCanonicalCharacter({
+      id: 'ice-and-fire:character:1' as const,
+      name: 'Test User',
+    })
+
+    // Should not throw
+    expect(() => normalizeThronesCharacter(dto, canonicalCharacter)).not.toThrow()
+  })
+
+  test('should reject hostname that merely contains thronesapi.com', () => {
+    const dto: ThronesCharacterDto = {
+      id: 1,
+      firstName: 'Test',
+      lastName: 'User',
+      fullName: 'Test User',
+      title: '',
+      family: '',
+      image: 'test.jpg',
+      imageUrl: 'https://thronesapi.com.example.org/image.jpg',
+    }
+
+    const canonicalCharacter = createMockCanonicalCharacter({
+      id: 'ice-and-fire:character:1' as const,
+      name: 'Test User',
+    })
+
+    expect(() => normalizeThronesCharacter(dto, canonicalCharacter)).toThrow(
+      'Invalid imageUrl hostname: thronesapi.com.example.org'
     )
   })
 })

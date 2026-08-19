@@ -3,32 +3,34 @@ import { getCharacterMediaFromList } from './character_media_service'
 import type { ThronesCharacterDto } from '../lib/api/thronesapi/api_types'
 import type { CanonicalCharacter } from '../lib/domain/canonical_entities'
 import { normalizeThronesCharacter } from '../lib/domain/character_media'
+import { getThronesCharacters } from '../lib/api/thronesapi/character_api'
 
 vi.mock('../lib/domain/character_media')
+vi.mock('../lib/api/thronesapi/character_api')
 
 describe('getCharacterMediaFromList', () => {
-  const mockThronesCharacters: ThronesCharacterDto[] = [
-    {
-      id: 2,
-      firstName: 'Jon',
-      lastName: 'Snow',
-      fullName: 'Jon Snow',
-      title: 'King of the North',
-      family: 'House Stark',
-      image: 'jon-snow.jpg',
-      imageUrl: 'https://thronesapi.com/assets/images/jon-snow.jpg',
-    },
-    {
-      id: 0,
-      firstName: 'Daenerys',
-      lastName: 'Targaryen',
-      fullName: 'Daenerys Targaryen',
-      title: 'Mother of Dragons',
-      family: 'House Targaryen',
-      image: 'daenerys.jpg',
-      imageUrl: 'https://thronesapi.com/assets/images/daenerys.jpg',
-    },
-  ]
+const mockThronesCharacters: ThronesCharacterDto[] = [
+     {
+       id: 2,
+       firstName: 'Jon',
+       lastName: 'Snow',
+       fullName: 'Jon Snow',
+       title: 'King of the North',
+       family: 'House Stark',
+       image: 'jon-snow.jpg',
+       imageUrl: 'https://thronesapi.com/assets/images/jon-snow.jpg'
+     },
+     {
+       id: 0,
+       firstName: 'Daenerys',
+       lastName: 'Targaryen',
+       fullName: 'Daenerys Targaryen',
+       title: 'Mother of Dragons',
+       family: 'House Targaryen',
+       image: 'daenerys.jpg',
+       imageUrl: 'https://thronesapi.com/assets/images/daenerys.jpg'
+     }
+   ]
 
   const mockCanonicalCharacter: CanonicalCharacter = {
     id: 'ice-and-fire:character:583' as const,
@@ -59,8 +61,8 @@ describe('getCharacterMediaFromList', () => {
       },
       knownActors: ['Kit Harington'],
       searchTerms: {
-        en: ['Lord Snow', 'Lord Crow', 'The Bastard of Winterfell', "Lord Commander of the Night's Watch"],
-        es: ['Lord Cuervo', 'El Bastardo de Winterfell', 'Lord Comandante de la Guardia de la Noche'],
+        en: [],
+        es: [],
       },
       searchPriority: 50,
     },
@@ -85,17 +87,17 @@ describe('getCharacterMediaFromList', () => {
     vi.clearAllMocks()
   })
 
-  test('returns undefined when there is no mapping for the canonical character', () => {
-    const unmappedCharacter: CanonicalCharacter = {
-      ...mockCanonicalCharacter,
-      id: 'ice-and-fire:character:999' as const, // not in mapping
-    }
+test('returns undefined when there is no mapping for the canonical character', () => {
+const unmappedCharacter: CanonicalCharacter = {
+       ...mockCanonicalCharacter,
+       id: 'ice-and-fire:character:999' as const
+     }
 
-    const result = getCharacterMediaFromList(mockThronesCharacters, unmappedCharacter)
+     const result = getCharacterMediaFromList(mockThronesCharacters, unmappedCharacter)
 
-    expect(result).toBeUndefined()
-    expect(normalizeThronesCharacter).not.toHaveBeenCalled()
-  })
+     expect(result).toBeUndefined()
+     expect(normalizeThronesCharacter).not.toHaveBeenCalled()
+   })
 
   test('returns undefined when mapping exists but ThronesAPI record not found', () => {
     // Use the Tyrion mapping (providerId 14) which is not in our mock list
@@ -139,16 +141,16 @@ describe('getCharacterMediaFromList', () => {
       born: null,
       died: null,
       titles: [],
-      aliases: [],
-      fatherId: null,
-      motherId: null,
-      spouseId: null,
-      allegianceIds: [],
-      bookIds: [],
-      povBookIds: [],
-      tvSeries: [],
-      playedBy: [],
-    }
+aliases: [],
+       fatherId: null,
+       motherId: null,
+       spouseId: null,
+       allegianceIds: [],
+       bookIds: [],
+       povBookIds: [],
+       tvSeries: [],
+       playedBy: []
+     }
 
     const result = getCharacterMediaFromList(mockThronesCharacters, tyrionCharacter)
 
@@ -195,27 +197,39 @@ describe('getCharacterMediaFromList', () => {
         url: 'https://anapioficeandfire.com/api/characters/271',
       },
       editorial: null, // assume no editorial metadata for this one
-      name: 'Daenerys Targaryen',
-      gender: 'Female',
-      culture: null,
-      born: null,
-      died: null,
-      titles: [],
-      aliases: [],
-fatherId: null,
-    motherId: null,
-    spouseId: null,
-    allegianceIds: [],
-    bookIds: [],
-    povBookIds: [],
-    tvSeries: [],
-    playedBy: [],
-    }
+name: 'Daenerys Targaryen',
+       gender: 'Female',
+       culture: null,
+       born: null,
+       died: null,
+       titles: [],
+aliases: [],
+        fatherId: null,
+        motherId: null,
+        spouseId: null,
+        allegianceIds: [],
+        bookIds: [],
+        povBookIds: [],
+        tvSeries: [],
+        playedBy: []
+     }
 
     const result = getCharacterMediaFromList(mockThronesCharacters, secondDaenerysCharacter)
 
     // Since there's no mapping for ice-and-fire:character:271, it should return undefined
     expect(result).toBeUndefined()
     expect(normalizeThronesCharacter).not.toHaveBeenCalled()
+  })
+
+  test('does not fetch ThronesAPI when there is no mapping', () => {
+    // Use an ID that is not in CHARACTER_MEDIA_MAPPING
+const unmappedCharacter: CanonicalCharacter = {
+       ...mockCanonicalCharacter,
+       id: 'ice-and-fire:character:999' as const
+     }
+
+    getCharacterMediaFromList(mockThronesCharacters, unmappedCharacter)
+
+    expect(getThronesCharacters).not.toHaveBeenCalled()
   })
 })
