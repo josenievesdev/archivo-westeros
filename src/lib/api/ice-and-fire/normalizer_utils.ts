@@ -25,6 +25,7 @@ const RESOURCE_PATHS: Record<CanonicalResource, string> = {
 
 const SOURCE_BASE_URLS = [
   'https://anapioficeandfire.com/api',
+  'https://www.anapioficeandfire.com/api',
   iceAndFireApiUrl,
 ].map((value) => new URL(value))
 

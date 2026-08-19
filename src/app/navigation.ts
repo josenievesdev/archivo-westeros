@@ -2,6 +2,7 @@ export const desktopNavigation = [
   { label: 'Personajes', to: '/personajes' },
   { label: 'Casas', to: '/casas' },
   { label: 'Linajes', to: '/linajes' },
+  { label: 'Mesa de guerra', to: '/mesa-de-guerra' },
   { label: 'Mapa', to: '/mapa' },
   { label: 'Cronología', to: '/cronologia' },
 ] as const

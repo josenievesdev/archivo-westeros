@@ -1,5 +1,5 @@
 import { Building2, SearchX, UserRound, WifiOff } from 'lucide-react'
-import { startTransition, useState, type FocusEvent } from 'react'
+import { startTransition, useState, useRef, useEffect, type FocusEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { HouseSigil } from '../../../components/ui/HouseSigil'
 import { SearchField } from '../../../components/ui/SearchField'
@@ -17,6 +17,8 @@ export function HomeSearch() {
   const [preferredCharacterId, setPreferredCharacterId] =
     useState<CanonicalCharacterId>()
   const [failedImageIds, setFailedImageIds] = useState<Set<string>>(new Set())
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const trimmedValue = value.trim()
   const debouncedValue = useDebouncedValue(trimmedValue, 350)
   const effectiveValue = submittedValue || (trimmedValue.length >= 2 ? debouncedValue : '')
@@ -26,6 +28,41 @@ export function HomeSearch() {
     trimmedValue.length >= 2 && !submittedValue && debouncedValue !== trimmedValue
   const showResults = search.enabled && !isWaitingForDebounce
   const hasResults = search.characters.length > 0 || search.houses.length > 0
+
+  // Open dropdown when showResults becomes true
+  useEffect(() => {
+    if (showResults) {
+      setDropdownOpen(true)
+    }
+  }, [showResults])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && event.target && event.target instanceof Node && !containerRef.current.contains(event.target)) {
+        setDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  // Close dropdown on Escape key
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
   function updateValue(nextValue: string) {
     setValue(nextValue)
@@ -60,7 +97,7 @@ function handleImageError(characterId: string) {
    }
 
   return (
-    <div className="home-search">
+    <div ref={containerRef} className="home-search">
       <SearchField
         autoComplete="off"
         label="Buscar personajes y casas"
@@ -99,12 +136,12 @@ function handleImageError(characterId: string) {
         </div>
       )}
 
-      {showResults && (
-        <section
-          aria-label={`Resultados para ${effectiveValue}`}
-          aria-live="polite"
-          className="home-search__results"
-        >
+{dropdownOpen && showResults && (
+    <section
+      aria-label={`Resultados para ${effectiveValue}`}
+      aria-live="polite"
+      className="home-search__results"
+    >
           {search.isError ? (
             <div className="home-search__message" role="alert">
               <WifiOff aria-hidden="true" className="size-5 text-fallen" />

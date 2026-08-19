@@ -22,6 +22,21 @@ describe('referencias de An API of Ice and Fire', () => {
     )
   })
 
+  test('acepta la variante www de la fuente conocida', () => {
+    const url = 'https://www.anapioficeandfire.com/api/characters/1303/'
+
+    expect(extractResourceId(url, 'character')).toBe('1303')
+    expect(extractSourceRef(url, 'character')).toEqual({
+      source: 'ice-and-fire',
+      resource: 'character',
+      externalId: '1303',
+      url,
+    })
+    expect(extractCanonicalResourceId(url, 'character')).toBe(
+      'ice-and-fire:character:1303',
+    )
+  })
+
   test('rechaza otra procedencia, protocolo, colección o ID no numérico', () => {
     expect(
       extractSourceRef('https://example.com/api/characters/1303', 'character'),
@@ -37,6 +52,13 @@ describe('referencias de An API of Ice and Fire', () => {
     ).toBeNull()
     expect(
       extractSourceRef('https://anapioficeandfire.com/api/characters/1303?copy=1', 'character'),
+    ).toBeNull()
+    // malicious variants with www
+    expect(
+      extractSourceRef('https://www.anapioficeandfire.com.example.org/api/characters/1303', 'character'),
+    ).toBeNull()
+    expect(
+      extractSourceRef('https://anapioficeandfire.com.example.org/api/characters/1303', 'character'),
     ).toBeNull()
   })
 
