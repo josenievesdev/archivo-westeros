@@ -8,16 +8,20 @@ import type { CanonicalCharacterId } from '../../../lib/domain/canonical_entitie
 import { QUICK_SEARCHES } from '../config/home-content'
 import { useDebouncedValue } from '../hooks/use-debounced-value'
 import { useHomeSearch } from '../hooks/use-home-search'
+import { useThronesCharactersList } from '../../../hooks/use-thrones-characters-list.ts'
+import { getCharacterMediaFromList } from '../../../services/character_media_service'
 
 export function HomeSearch() {
   const [value, setValue] = useState('')
   const [submittedValue, setSubmittedValue] = useState('')
   const [preferredCharacterId, setPreferredCharacterId] =
     useState<CanonicalCharacterId>()
+  const [failedImageIds, setFailedImageIds] = useState<Set<string>>(new Set())
   const trimmedValue = value.trim()
   const debouncedValue = useDebouncedValue(trimmedValue, 350)
   const effectiveValue = submittedValue || (trimmedValue.length >= 2 ? debouncedValue : '')
   const search = useHomeSearch(effectiveValue, preferredCharacterId)
+  const { data: thronesCharacters } = useThronesCharactersList()
   const isWaitingForDebounce =
     trimmedValue.length >= 2 && !submittedValue && debouncedValue !== trimmedValue
   const showResults = search.enabled && !isWaitingForDebounce
@@ -46,6 +50,15 @@ export function HomeSearch() {
     event.currentTarget.scrollIntoView?.({ block: 'nearest', inline: 'nearest' })
   }
 
+function handleImageError(characterId: string) {
+     // Marcar esta imagen como fallida para mostrar el fallback
+     setFailedImageIds((prev) => {
+       const newSet = new Set(prev)
+       newSet.add(characterId)
+       return newSet
+     })
+   }
+
   return (
     <div className="home-search">
       <SearchField
@@ -55,6 +68,7 @@ export function HomeSearch() {
         onClear={() => {
           setSubmittedValue('')
           setPreferredCharacterId(undefined)
+          setFailedImageIds(new Set()) // Limpiar errores al limpiar la búsqueda
         }}
         onSubmit={submitValue}
         onValueChange={updateValue}
@@ -117,17 +131,35 @@ export function HomeSearch() {
                       const { character, view } = hit
                       const summary = hit.disambiguation || view.summary
 
+                      // Obtener la media del personaje desde la lista cacheada
+                      const media = thronesCharacters
+                        ? getCharacterMediaFromList(thronesCharacters, character)
+                        : undefined
+
+                      // Determinar si mostrar la miniatura o el fallback
+                      const showThumbnail =
+                        media !== undefined && !failedImageIds.has(character.id)
+
                       return (
                         <li key={character.id}>
                           <Link className="home-search__result-link" to={`/personajes/${character.source.externalId}`}>
-                            {view.houseTheme ? (
-                              <HouseSigil decorative house={view.houseTheme} size={22} />
+                            {showThumbnail ? (
+                              <img
+                                src={media.portraitUrl}
+                                alt="" // Decorativo, el nombre ya está presente
+                                className="home-search__character-thumbnail"
+                                onError={() => handleImageError(character.id)}
+                              />
                             ) : (
-                              <UserRound aria-hidden="true" className="size-[1.375rem] text-ice" />
+                              view.houseTheme ? (
+                                <HouseSigil decorative house={view.houseTheme} size={22} />
+                              ) : (
+                                <UserRound aria-hidden="true" className="size-[1.375rem] text-ice" />
+                              )
                             )}
                             <span className="min-w-0">
                               <span className="block truncate font-display text-sm font-semibold text-bone">{view.name}</span>
-                              <span className="mt-0.5 block truncate font-serif text-sm italic text-parchment">
+                              <span className="mt-0.5 block truncate font-serif text-sm italic text-parchment}">
                                 {summary}
                               </span>
                             </span>
@@ -156,7 +188,7 @@ export function HomeSearch() {
                             )}
                             <span className="min-w-0">
                               <span className="block truncate font-display text-sm font-semibold text-bone">{house.name}</span>
-                              <span className="mt-0.5 block truncate font-serif text-sm italic text-parchment">
+                              <span className="mt-0.5 block truncate font-serif text-sm italic text-parchment}">
                                 {house.region || house.words || 'Casa registrada'}
                               </span>
                             </span>

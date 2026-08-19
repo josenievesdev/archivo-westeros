@@ -408,6 +408,14 @@
   background: #ffffff08;
 }
 
+.home-search__character-thumbnail {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-etch);
+}
+
 .home-search__message {
   display: flex;
   min-height: 5.5rem;
