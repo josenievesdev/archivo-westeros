@@ -9,7 +9,10 @@ export function AppLayout() {
   // Pantallas que traen su propia composición a sangre (Hero a ancho completo,
   // bandas de borde a borde y pie propio): el layout no les añade caja ni pie.
   const isImmersive =
-    pathname === '/' || pathname === '/mesa-de-guerra' || /^\/casas\/[^/]+$/.test(pathname)
+    pathname === '/' ||
+    pathname === '/mesa-de-guerra' ||
+    /^\/casas\/[^/]+$/.test(pathname) ||
+    /^\/personajes\/[^/]+$/.test(pathname)
 
   return (
     <div className="flex min-h-screen flex-col bg-void text-bone">

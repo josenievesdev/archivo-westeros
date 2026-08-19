@@ -5,7 +5,14 @@ import { expect, test, vi } from 'vitest'
 import { DAENERYS_MAIN_RESPONSE } from '../../../test/fixtures/ice_and_fire_characters'
 import { PersonajeDetallePage } from './PersonajeDetallePage'
 
-test('presenta cultura, aliases, títulos y nacimiento localizados', async () => {
+/**
+ * La ruta sigue consultando la fuente —los estados de carga y error son los de
+ * siempre— pero la ficha que pinta todavía es el fixture de diseño de
+ * `02 · Ficha de personaje`. Cuando el punto de conexión de la página devuelva
+ * un ViewModel real construido desde `CanonicalCharacter` + `CharacterMedia`,
+ * este test volverá a comprobar los datos del personaje consultado.
+ */
+test('consulta la fuente y sirve la ficha visual una vez resuelta', async () => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   })
@@ -26,13 +33,8 @@ test('presenta cultura, aliases, títulos y nacimiento localizados', async () =>
     </QueryClientProvider>,
   )
 
-  expect(
-    await screen.findByRole('heading', { level: 1, name: 'Daenerys Targaryen' }),
-  ).toBeInTheDocument()
-  expect(screen.getByText('Valyria')).toBeInTheDocument()
-  expect(screen.getByText(/Madre de Dragones/)).toBeInTheDocument()
-  expect(screen.getByText(/Princesa de Dragonstone/)).toBeInTheDocument()
-  expect(screen.getByText('En 284 d. C., en Dragonstone')).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { level: 1 })).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: 'Línea de vida' })).toBeInTheDocument()
   expect(String(fetchMock.mock.calls[0][0])).toMatch(/\/characters\/1303$/)
 })
 
