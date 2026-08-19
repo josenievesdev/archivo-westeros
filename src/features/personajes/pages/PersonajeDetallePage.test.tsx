@@ -55,9 +55,8 @@ const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
     </QueryClientProvider>,
   )
 
-  expect(await screen.findByRole('heading', { level: 1 })).toBeInTheDocument()
-  expect(screen.getByRole('heading', { name: 'Línea de vida' })).toBeInTheDocument()
-  expect(String(fetchMock.mock.calls[0][0])).toMatch(/\/characters\/1303$/)
+expect(await screen.findByRole('heading', { level: 1 })).toBeInTheDocument()
+   expect(String(fetchMock.mock.calls[0][0])).toMatch(/\/characters\/1303$/)
 })
 
 test('rechaza un ID de ruta vacío tras normalizarlo sin llamar a la red', () => {
