@@ -304,6 +304,88 @@ GET /houses/:id
 `VITE_ICE_AND_FIRE_API_URL` permite sustituir la base en desarrollo o integración,
 pero no es obligatoria y no contiene secretos.
 
+## Proveedor secundario de medios: ThronesAPI
+
+ThronesAPI se utiliza únicamente como fuente de imágenes de retrato para personajes.
+No sustituye ningún dato canónico ni editorial.
+
+### Endpoint
+
+Base pública:
+
+```text
+https://thronesapi.com/api/v2
+```
+
+Recurso conectado:
+
+```text
+GET /Characters
+```
+
+### DTO del proveedor
+
+```typescript
+interface ThronesCharacterDto {
+  id: number
+  firstName: string
+  lastName: string
+  fullName: string
+  title: string
+  family: string
+  image: string
+  imageUrl: string
+}
+```
+
+### Modelo interno de medios
+
+```typescript
+type CharacterMediaProvider = 'thronesapi'
+
+interface CharacterMedia {
+  canonicalCharacterId: CanonicalCharacterId
+  provider: CharacterMediaProvider
+  providerId: number
+
+  portraitUrl: string
+  imageFileName?: string
+
+  altText: string
+
+  source: {
+    provider: 'thronesapi'
+    remoteUrl: string
+  }
+}
+```
+
+### Flujo de integración
+
+```text
+CanonicalCharacter
+        ↓
+Mapping editorial explícito (canonicalCharacterId → providerId)
+        ↓
+ThronesAPI (GET /Characters)
+        ↓
+CharacterMedia
+        ↓
+Features (vía hook o servicio)
+        ↓
+UI (futuro)
+```
+
+### Responsabilidades adicionales
+
+- El mapping editorial es explícito y se encuentra en `src/content/character_media_mapping.ts`.
+- Solo se utilizan los campos `id`, `fullName` (como auditoría), `image` y `imageUrl` de ThronesAPI.
+- Los campos `title` y `family` de ThronesAPI se ignoran intencionalmente debido a posibles inconsistencias y spoilers.
+- El `altText` se genera desde el nombre canónico del personaje (preferido editorial o nombre canónico).
+- La validación de `imageUrl` asegura que sea una URL HTTP o HTTPS válida.
+- El listado de ThronesAPI se cachea mediante TanStack Query para evitar peticiones duplicadas.
+- Sin mapping, se devuelve `undefined` sin romper la entidad canónica.
+
 ## Datos complementarios futuros
 
 La aplicación necesitará una fuente propia para información que no está modelada o

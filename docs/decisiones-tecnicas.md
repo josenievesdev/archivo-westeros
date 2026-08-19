@@ -226,3 +226,17 @@ majors no bloquean las entidades disponibles.
 La búsqueda global y el filtro global quedan pendientes de un snapshot o índice
 sincronizado con cobertura explícita. El polish visual del archivo también queda fuera
 de esta decisión estructural.
+
+## ADR-021 — Proveedor secundario de medios para personajes
+
+**Decisión:** utilizar ThronesAPI (https://thronesapi.com/api/v2) como fuente secundaria
+únicamente para imágenes de retrato de personajes, sin afectar datos canónicos ni
+editoriales.
+
+**Razón:** An API of Ice and Fire no proporciona imágenes suficientes para todos los
+personajes necesarios en la UI. ThronesAPI ofrece un conjunto pequeño de imágenes de
+la serie televisiva. Para mantener la pureza de los datos canónicos, se establece un
+mapping editorial explícito desde el ID canónico al ID de proveedor, se ignoran los
+campos `title` y `family` de ThronesAPI (posibles inconsistencias y spoilers), y se
+genera el `altText` desde el nombre canónico del personaje. El listado de ThronesAPI
+se cachea mediante TanStack Query para evitar peticiones duplicadas.

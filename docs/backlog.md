@@ -98,6 +98,7 @@ no representa prioridad ni compromiso de entrega.
 - Extender la preservación del header de paginación `Link` más allá del archivo de casas.
 - Sincronizar un índice de las 444 casas para búsqueda parcial global sin descargas por navegación.
 - Registrar URLs de relación malformadas como diagnósticos sin confundirlas con referencias ausentes.
+- Establecer ThronesAPI como proveedor secundario de imágenes de retrato para personajes (mapping editorial explícito, cache de listado, normalización y servicio).
 
 ## UX
 
