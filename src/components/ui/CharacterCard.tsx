@@ -72,7 +72,7 @@ export function CharacterCard({
         ) : houseTheme ? (
           <HouseSigil className="relative z-10 opacity-25" decorative house={houseTheme} size={88} />
         ) : (
-          <span className="relative z-10 font-display text-2xl text-parchment/35">
+          <span className="character-card__initials relative z-10 font-display">
             {initials}
           </span>
         )}
@@ -87,7 +87,7 @@ export function CharacterCard({
           />
         )}
       </div>
-      <div className="min-w-0 flex-1 p-4 sm:p-5">
+      <div className="character-card__body min-w-0 flex-1 p-4 sm:p-5">
         {house && houseTheme && !isPortrait ? (
           <HouseBadge house={houseTheme} label={house} />
         ) : house ? (
@@ -95,15 +95,21 @@ export function CharacterCard({
             {house}
           </p>
         ) : null}
-        <h2 className="mt-2 font-display text-lg font-semibold leading-6 text-bone sm:text-xl">
+        <h2 className="character-card__name mt-2 font-display text-lg font-semibold leading-6 text-bone sm:text-xl">
           {name}
         </h2>
-        {alias && <p className="mt-1 font-serif text-base italic text-parchment">{alias}</p>}
+        {alias && (
+          <p className="character-card__alias mt-1 font-serif text-base italic text-parchment">
+            {alias}
+          </p>
+        )}
         {description && (
-          <p className="mt-3 font-serif text-base leading-6 text-parchment">{description}</p>
+          <p className="character-card__description mt-3 font-serif text-base leading-6 text-parchment">
+            {description}
+          </p>
         )}
         {actor && (
-          <p className="mt-3 font-sans text-xs leading-5 text-parchment">
+          <p className="character-card__actor mt-3 font-sans text-xs leading-5 text-parchment">
             <span className="text-parchment">Interpretado por </span>
             <span className="text-bone">{actor}</span>
           </p>

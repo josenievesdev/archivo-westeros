@@ -159,7 +159,7 @@ function handleImageError(characterId: string) {
                             )}
                             <span className="min-w-0">
                               <span className="block truncate font-display text-sm font-semibold text-bone">{view.name}</span>
-                              <span className="mt-0.5 block truncate font-serif text-sm italic text-parchment}">
+                              <span className="mt-0.5 block truncate font-serif text-sm italic text-parchment">
                                 {summary}
                               </span>
                             </span>
@@ -188,7 +188,7 @@ function handleImageError(characterId: string) {
                             )}
                             <span className="min-w-0">
                               <span className="block truncate font-display text-sm font-semibold text-bone">{house.name}</span>
-                              <span className="mt-0.5 block truncate font-serif text-sm italic text-parchment}">
+                              <span className="mt-0.5 block truncate font-serif text-sm italic text-parchment">
                                 {house.region || house.words || 'Casa registrada'}
                               </span>
                             </span>

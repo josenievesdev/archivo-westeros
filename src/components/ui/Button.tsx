@@ -45,7 +45,9 @@ export function Button({
   return (
     <button
       className={cx(
-        'inline-flex items-center justify-center gap-2 rounded-etched border font-sans font-semibold uppercase tracking-[0.16em] transition-[border-color,background-color,color,filter] disabled:cursor-not-allowed disabled:opacity-45',
+        // `whitespace-nowrap`: con el tracking ancho las etiquetas cortas
+        // («Anterior», «Siguiente») se partían en dos líneas dentro de flex.
+        'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-etched border font-sans font-semibold uppercase tracking-[0.16em] transition-[border-color,background-color,color,filter] disabled:cursor-not-allowed disabled:opacity-45',
         variantClasses[variant],
         sizeClasses[size],
         className,
@@ -55,7 +57,9 @@ export function Button({
       {...props}
     >
       {loading && <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />}
-      <span>{children}</span>
+      {/* Preflight declara `svg { display: block }`: sin fila flexible aquí, un
+          icono junto a la etiqueta la empujaba a una segunda línea. */}
+      <span className="inline-flex items-center gap-2">{children}</span>
     </button>
   )
 }

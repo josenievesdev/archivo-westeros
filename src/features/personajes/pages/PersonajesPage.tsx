@@ -24,7 +24,7 @@ export function PersonajesPage() {
           <span className="sr-only">Cargando personajes...</span>
           <ul
             aria-hidden="true"
-            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            className="grid-even-rows grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
           >
             {Array.from({ length: 8 }, (_, index) => (
               <li key={index}>
@@ -50,7 +50,7 @@ export function PersonajesPage() {
         />
       )}
       {characters.data && characters.data.length > 0 && (
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ul className="grid-even-rows grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {characters.data.map((character) => {
             const view = createCharacterViewModel(character)
 

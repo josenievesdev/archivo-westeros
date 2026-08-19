@@ -546,6 +546,17 @@ input[type="search"]::-webkit-search-decoration {
   place-items: center;
 }
 
+/* Rejilla de fichas homogénea: `1fr` en las filas implícitas iguala TODAS las
+   filas a la más alta del grid, no solo las de una misma fila. Es el recurso
+   compartido por los listados de casas y de personajes. */
+.grid-even-rows {
+  grid-auto-rows: 1fr;
+}
+
+.character-card:not(.character-card--featured) {
+  height: 100%;
+}
+
 .character-card {
   display: flex;
   min-height: 9rem;
@@ -553,7 +564,11 @@ input[type="search"]::-webkit-search-decoration {
   border: 1px solid var(--color-etch);
   border-radius: var(--radius-etched);
   background: var(--color-slab);
-  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  /* Mismo gesto que la pieza de la mesa de guerra: lento, pesado, contenido. */
+  transition:
+    transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-color 320ms ease,
+    box-shadow 320ms ease;
 }
 
 .character-card__media {
@@ -578,10 +593,23 @@ input[type="search"]::-webkit-search-decoration {
   left: 0.875rem;
 }
 
+/* Columna que llena su carril: en el raíl de la Home las fichas quedaban a
+   392 / 409 / 416px según el largo del alias. El retrato conserva su alto fijo
+   y el aire sobrante se lo queda el pie de la ficha. */
 .character-card--featured {
-  display: block;
+  display: flex;
   width: 14rem;
+  height: 100%;
   min-height: 24.375rem;
+  flex-direction: column;
+}
+
+.character-card--featured .character-card__media {
+  flex: none;
+}
+
+.character-card--featured > div:last-child {
+  flex: 1;
 }
 
 .character-card--featured .character-card__media {
@@ -679,6 +707,49 @@ input[type="search"]::-webkit-search-decoration {
   object-fit: cover;
 }
 
+/* Placeholder de retrato: iniciales grabadas en la piedra, no un texto suelto
+   perdido en el degradado. */
+.character-card__initials {
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  place-items: center;
+  border: 1px solid #ede6d61f;
+  border-radius: 999px;
+  color: #b9b0a047;
+  font-size: 1.375rem;
+  letter-spacing: 0.08em;
+}
+
+/* Zonas fijas dentro de la ficha: nombre y alias arriba, atribución abajo. El
+   aire sobrante se acumula entre ambos y no detrás del último renglón. */
+.character-card__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.character-card__name {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+.character-card__alias,
+.character-card__description {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+.character-card:not(.character-card--featured) .character-card__actor {
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
 .character-card-link {
   display: block;
   height: 100%;
@@ -694,8 +765,15 @@ input[type="search"]::-webkit-search-decoration {
   .character-card-link:hover .character-card {
     border-color: color-mix(in srgb, var(--house-accent) 45%, var(--color-etch));
     box-shadow: var(--shadow-raised);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
   }
+}
+
+/* Todo hover tiene su equivalente de teclado. */
+.character-card-link:focus-visible .character-card {
+  border-color: color-mix(in srgb, var(--house-accent) 45%, var(--color-etch));
+  box-shadow: var(--shadow-raised);
+  transform: translateY(-3px);
 }
 
 @media (min-width: 40rem) {
@@ -703,12 +781,18 @@ input[type="search"]::-webkit-search-decoration {
     --page-gutter: 2rem;
   }
 
-  .character-card {
-    display: block;
+  /* Columna flexible que llena la celda: dentro de una misma rejilla todas las
+     fichas terminan a la misma altura y el retrato conserva su proporción.
+     `featured` mantiene su composición fija de la Home. */
+  .character-card:not(.character-card--featured) {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
   }
 
-  .character-card__media {
+  .character-card:not(.character-card--featured) .character-card__media {
     width: 100%;
+    flex: none;
     aspect-ratio: 4 / 5;
   }
 }
@@ -731,6 +815,32 @@ input[type="search"]::-webkit-search-decoration {
   }
 }
 
+/* Páginas con caja (archivo, listados): el ritmo vertical de la página lo fija
+   esta clase y no utilidades sueltas, porque `.archive-main` se declara después
+   de la capa de utilidades y anulaba su `padding-bottom`. Sin esto la
+   paginación quedaba pegada al pie a partir de 768. */
+.archive-main--framed {
+  padding-block: 2rem calc(4.5rem + 5.75rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 40rem) {
+  .archive-main--framed {
+    padding-block: 3rem calc(5.5rem + 5.75rem + env(safe-area-inset-bottom));
+  }
+}
+
+@media (min-width: 48rem) {
+  .archive-main--framed {
+    padding-block: 3rem 6rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .archive-main--framed {
+    padding-block: 4rem 7.5rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -739,5 +849,12 @@ input[type="search"]::-webkit-search-decoration {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* Anular la duración no basta: sin esto la ficha seguía saltando a su
+     posición elevada, solo que de golpe. */
+  .character-card-link:hover .character-card,
+  .character-card-link:focus-visible .character-card {
+    transform: none;
   }
 }

@@ -26,7 +26,7 @@ export function AppLayout() {
       <AppHeader />
 
       <main
-        className={cx('archive-main flex-1', !isImmersive && 'py-8 sm:py-12 lg:py-16')}
+        className={cx('archive-main flex-1', !isImmersive && 'archive-main--framed')}
         id="contenido-principal"
       >
         {isImmersive ? <Outlet /> : <Container><Outlet /></Container>}

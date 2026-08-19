@@ -6,8 +6,9 @@ import {
   ShieldX,
   WifiOff,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { Link } from 'react-router-dom'
+import '../styles/houses-archive.css'
 import { Button } from '../../../components/ui/Button'
 import { EmptyState, Skeleton } from '../../../components/ui/Feedback'
 import { HouseSigil } from '../../../components/ui/HouseSigil'
@@ -37,98 +38,93 @@ interface MajorHouseCardProps {
   metadata: MajorHouseMetadata
 }
 
+/* Ficha heráldica: cinta de casa, medallón con sigilo y lema anclado al pie.
+   Más presencia que el registro, menos que la pieza de la Home. */
 function MajorHouseCard({ house, metadata }: MajorHouseCardProps) {
   return (
     <li className="min-w-0">
       <Link
         aria-label={`Ver casa ${metadata.shortName}: ${house.name}`}
-        className="group block h-full rounded-etched focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+        className="major-house-card"
         data-house={metadata.themeKey}
         to={`/casas/${house.source.externalId}`}
       >
-        <Surface
-          as="article"
-          className="flex h-full min-h-64 flex-col p-5 transition-[border-color,background-color,transform] group-hover:-translate-y-0.5 group-hover:border-[var(--house-accent)] group-hover:bg-relief sm:p-6"
-          variant="raised"
-        >
-          <div className="flex items-start justify-between gap-4">
+        <article className="major-house-card__frame">
+          <div className="major-house-card__head">
             <div className="min-w-0">
-              <p className="font-sans text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-gold">
-                Gran casa
-              </p>
-              <h3 className="mt-2 font-display text-2xl font-semibold text-bone">
-                {metadata.shortName}
-              </h3>
+              <p className="major-house-card__eyebrow">Gran casa</p>
+              <h3 className="major-house-card__name">{metadata.shortName}</h3>
             </div>
-            <span className="grid size-14 flex-none place-items-center rounded-full border border-[var(--house-accent)]/50 bg-stone text-[var(--house-accent)]">
+            <span className="major-house-card__crest">
               <HouseSigil decorative house={metadata.themeKey} size={30} />
             </span>
           </div>
 
-          <p className="mt-4 break-words font-serif text-sm leading-6 text-parchment">
-            {house.name}
-          </p>
+          <p className="major-house-card__full">{house.name}</p>
 
-          <dl className="mt-5 grid gap-3 border-t border-etch pt-4 font-sans text-xs">
-            {house.region && (
-              <div>
-                <dt className="uppercase tracking-[0.12em] text-ash">Región</dt>
-                <dd className="mt-1 break-words text-bone">{house.region}</dd>
-              </div>
-            )}
-            {house.seats[0] && (
-              <div>
-                <dt className="uppercase tracking-[0.12em] text-ash">Asiento</dt>
-                <dd className="mt-1 break-words text-bone">{house.seats[0]}</dd>
-              </div>
-            )}
-          </dl>
+          {(house.region || house.seats[0]) && (
+            <dl className="major-house-card__facts">
+              {house.region && (
+                <div>
+                  <dt>Región</dt>
+                  <dd>{house.region}</dd>
+                </div>
+              )}
+              {house.seats[0] && (
+                <div>
+                  <dt>Asiento</dt>
+                  <dd>{house.seats[0]}</dd>
+                </div>
+              )}
+            </dl>
+          )}
 
           {house.words && (
-            <p className="mt-auto pt-5 font-serif text-base italic leading-6 text-bone">
-              “{house.words}”
+            <p className="major-house-card__words major-house-card__words--pinned">
+              <i aria-hidden="true" />
+              <q>{house.words}</q>
             </p>
           )}
-        </Surface>
+        </article>
       </Link>
     </li>
   )
 }
 
+/* Registro sobrio: marca cuadrada genérica, sin tema de casa. */
 function ArchiveHouseCard({ entry }: { entry: HouseArchiveEntry }) {
   return (
     <li className="min-w-0">
       <Link
         aria-label={`Ver ${entry.displayName}`}
-        className="group block h-full rounded-etched focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+        className="archive-house-card"
         to={`/casas/${entry.sourceId}`}
       >
-        <Surface
-          as="article"
-          className="flex h-full min-h-44 items-start gap-4 p-5 transition-[border-color,background-color,transform] group-hover:-translate-y-0.5 group-hover:border-old-gold group-hover:bg-relief"
-        >
-          <span className="grid size-12 flex-none place-items-center rounded-full border border-etch bg-stone text-gold">
-            <Building2 aria-hidden="true" className="size-5" />
-          </span>
-          <div className="min-w-0">
-            <h3 className="break-words font-display text-lg font-semibold leading-6 text-bone">
-              {entry.displayName}
-            </h3>
-            <p className="mt-2 break-words font-sans text-xs uppercase tracking-[0.12em] text-parchment">
-              {entry.region || 'Región no indicada'}
-            </p>
-            {entry.seats[0] && (
-              <p className="mt-2 break-words font-serif text-sm leading-5 text-ash">
-                {entry.seats[0]}
+        <article className="archive-house-card__frame">
+          <div className="archive-house-card__head">
+            <span className="archive-house-card__mark">
+              <Building2 aria-hidden="true" className="size-5" />
+            </span>
+            <div className="min-w-0">
+              <h3 className="archive-house-card__name">{entry.displayName}</h3>
+              <p className="archive-house-card__region">
+                {entry.region || 'Región no indicada'}
               </p>
-            )}
-            {entry.words && (
-              <p className="mt-3 break-words font-serif text-base italic leading-6 text-parchment">
-                “{entry.words}”
-              </p>
-            )}
+            </div>
           </div>
-        </Surface>
+
+          {entry.seats[0] && (
+            <div className="archive-house-card__meta">
+              <p className="archive-house-card__seat">{entry.seats[0]}</p>
+            </div>
+          )}
+
+          {entry.words && (
+            <p className="archive-house-card__words archive-house-card__words--pinned">
+              “{entry.words}”
+            </p>
+          )}
+        </article>
       </Link>
     </li>
   )
@@ -141,7 +137,7 @@ function ArchiveSkeletons() {
       <ul aria-hidden="true" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: HOUSE_ARCHIVE_PAGE_SIZE }, (_, index) => (
           <li key={index}>
-            <Skeleton className="h-44" />
+            <Skeleton className="h-40" />
           </li>
         ))}
       </ul>
@@ -150,6 +146,7 @@ function ArchiveSkeletons() {
 }
 
 export function CasasPage() {
+  const searchHintId = `${useId()}-archive-hint`
   const [page, setPage] = useState(1)
   const [query, setQuery] = useState('')
   const [region, setRegion] = useState('')
@@ -215,7 +212,7 @@ export function CasasPage() {
             >
               {MAJOR_HOUSE_METADATA.map((metadata) => (
                 <li key={metadata.canonicalId}>
-                  <Skeleton className="h-64" />
+                  <Skeleton className="h-[19rem]" />
                 </li>
               ))}
             </ul>
@@ -275,7 +272,7 @@ export function CasasPage() {
         )}
 
         {orderedMajorHouses.length > 0 && (
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <ul className="grid-even-rows grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {orderedMajorHouses.map(({ house, metadata }) => (
               <MajorHouseCard
                 house={house}
@@ -330,25 +327,33 @@ export function CasasPage() {
 
         {archive.data && archive.data.items.length > 0 && (
           <>
-            <Surface className="space-y-5 p-4 sm:p-5" variant="inset">
-              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.35fr)] lg:items-end">
-                <SearchField
-                  hint={`Busca únicamente en las ${archive.data.items.length} casas cargadas de la página ${loadedArchivePage}; no en todo el archivo remoto.`}
-                  label="Buscar en la página cargada del archivo de casas"
-                  onValueChange={setQuery}
-                  placeholder="Nombre, región, lema o asiento"
-                  value={query}
-                />
+            <Surface className="space-y-4 p-4 sm:p-5" variant="inset">
+              <div className="houses-toolbar">
+                <div>
+                  {/* Rótulo puramente visual: el campo ya expone su etiqueta
+                      completa a lectores de pantalla. */}
+                  <span aria-hidden="true" className="houses-toolbar__label">
+                    Buscar en esta página
+                  </span>
+                  <SearchField
+                    aria-describedby={searchHintId}
+                    className="houses-toolbar__search"
+                    label="Buscar en la página cargada del archivo de casas"
+                    onValueChange={setQuery}
+                    placeholder="Nombre, región, lema o asiento"
+                    value={query}
+                  />
+                </div>
 
                 <div>
                   <label
-                    className="mb-2 block font-sans text-xs font-semibold uppercase tracking-[0.12em] text-parchment"
+                    className="houses-toolbar__label"
                     htmlFor="house-region-filter"
                   >
                     Región en esta página
                   </label>
                   <select
-                    className="min-h-12 w-full rounded-etched border border-etch bg-stone px-4 font-serif text-base text-bone outline-none transition-colors focus:border-gold focus-visible:ring-2 focus-visible:ring-gold/40"
+                    className="houses-toolbar__select"
                     id="house-region-filter"
                     onChange={(event) => setRegion(event.target.value)}
                     value={selectedRegion}
@@ -363,10 +368,15 @@ export function CasasPage() {
                 </div>
               </div>
 
-              <p aria-live="polite" className="font-sans text-xs text-ash">
-                {visibleEntries.length === 1
-                  ? '1 casa coincide en la página cargada.'
-                  : `${visibleEntries.length} casas coinciden en la página cargada.`}
+              <p className="houses-toolbar__caption">
+                <span id={searchHintId}>
+                  {`Busca únicamente en las ${archive.data.items.length} casas cargadas de la página ${loadedArchivePage}; no en todo el archivo remoto.`}
+                </span>
+                <span aria-live="polite">
+                  {visibleEntries.length === 1
+                    ? '1 casa coincide en la página cargada.'
+                    : `${visibleEntries.length} casas coinciden en la página cargada.`}
+                </span>
               </p>
             </Surface>
 
@@ -385,7 +395,7 @@ export function CasasPage() {
             ) : (
               <ul
                 aria-busy={archive.isFetching && archive.isPlaceholderData}
-                className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                className="grid-even-rows grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
               >
                 {visibleEntries.map((entry) => (
                   <ArchiveHouseCard entry={entry} key={entry.canonicalId} />
@@ -395,7 +405,7 @@ export function CasasPage() {
 
             <nav
               aria-label="Paginación del archivo de casas"
-              className="flex flex-col items-center justify-between gap-4 border-t border-etch pt-6 sm:flex-row"
+              className="houses-pagination"
             >
               <Button
                 disabled={
